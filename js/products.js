@@ -1,11 +1,12 @@
-// كود الصفحة الرئيسية - الإصدار المصحح
-console.log('🏠 تم تحميل الصفحة الرئيسية');
+// كود صفحة المنتجات - الإصدار المصحح
+console.log('🛒 تم تحميل صفحة المنتجات');
 
 // جلب المنتجات من localStorage
 function getProducts() {
     try {
         const products = JSON.parse(localStorage.getItem('storeProducts')) || [];
-        console.log('📦 عدد المنتجات في الرئيسية:', products.length);
+        console.log('📦 عدد المنتجات في المتجر:', products.length);
+        console.log('📋 قائمة المنتجات:', products);
         return products;
     } catch (error) {
         console.error('❌ خطأ في جلب المنتجات:', error);
@@ -13,49 +14,53 @@ function getProducts() {
     }
 }
 
-// عرض المنتجات المميزة في الصفحة الرئيسية
-function displayFeaturedProducts() {
-    const container = document.getElementById('featured-products');
-    if (!container) return;
+// عرض جميع المنتجات
+function displayAllProducts() {
+    console.log('🔄 بدء عرض المنتجات...');
+    
+    const container = document.getElementById('products-container');
+    const noProducts = document.getElementById('no-products');
+    
+    if (!container) {
+        console.log('❌ لم يتم العثور على products-container');
+        return;
+    }
 
     const products = getProducts();
     container.innerHTML = '';
 
-    // عرض آخر 6 منتجات
-    const featuredProducts = products.slice(-6).reverse();
-
-    if (featuredProducts.length === 0) {
-        container.innerHTML = `
-            <div class="col-12 text-center">
-                <div class="alert alert-info">
-                    <h4>🛍️ مرحبا بكم في متجرنا!</h4>
-                    <p>لم يتم إضافة منتجات بعد</p>
-                    <p class="small text-muted">استخدم لوحة التحكم لإضافة منتجاتك الأولى</p>
-                    <a href="admin/dashboard.html" class="btn btn-primary mt-2">📊 لوحة التحكم</a>
-                </div>
-            </div>
-        `;
+    if (products.length === 0) {
+        console.log('⚠️ لا توجد منتجات للعرض');
+        container.classList.add('d-none');
+        if (noProducts) noProducts.classList.remove('d-none');
         return;
     }
 
-    console.log(`🎯 عرض ${featuredProducts.length} منتج في الرئيسية`);
+    console.log(`🎯 عرض ${products.length} منتج`);
+    
+    if (noProducts) noProducts.classList.add('d-none');
+    container.classList.remove('d-none');
 
-    featuredProducts.forEach(product => {
+    products.forEach((product, index) => {
+        console.log(`📝 عرض المنتج ${index + 1}:`, product.name);
+        
         const productCard = `
-            <div class="col-lg-4 col-md-6 mb-4">
+            <div class="col-lg-4 col-md-6 mb-4" data-category="${product.category}" data-name="${product.name.toLowerCase()}">
                 <div class="card h-100 product-card">
-                    <img src="${product.image}" class="card-img-top product-image" alt="${product.name}"
-                         onerror="this.src='https://via.placeholder.com/300x200/cccccc/666666?text=صورة+منتج'">
+                    <img src="${product.image}" class="card-img-top product-image" alt="${product.name}" 
+                         onerror="this.src='https://via.placeholder.com/300x200/cccccc/666666?text=صورة+غير+متاحة'">
                     <div class="card-body">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p class="card-text text-muted">${product.description.substring(0, 100)}...</p>
+                        <h5 class="card-title text-primary">${product.name}</h5>
+                        <p class="card-text text-muted">${product.description}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 text-primary">$${product.price}</span>
-                            <button class="btn btn-success" onclick="addToCart(${product.id})">
+                            <span class="h4 text-success">$${product.price}</span>
+                            <button class="btn btn-primary" onclick="addToCart(${product.id})">
                                 🛒 أضف للسلة
                             </button>
                         </div>
-                        <small class="text-muted">${product.category}</small>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">${product.category}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,17 +103,87 @@ function updateCartCount() {
     }
 }
 
+// فلترة المنتجات
+function setupFilters() {
+    const searchInput = document.getElementById('search-input');
+    const categoryFilter = document.getElementById('category-filter');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterProducts);
+    }
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', filterProducts);
+    }
+}
+
+// تطبيق الفلترة
+function filterProducts() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const category = document.getElementById('category-filter').value;
+    
+    const productCards = document.querySelectorAll('#products-container .col-lg-4');
+    
+    let visibleCount = 0;
+    
+    productCards.forEach(card => {
+        const productName = card.getAttribute('data-name');
+        const productCategory = card.getAttribute('data-category');
+        
+        const matchesSearch = productName.includes(searchTerm);
+        const matchesCategory = !category || productCategory === category;
+        
+        if (matchesSearch && matchesCategory) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // إظهار رسالة إذا لم توجد نتائج
+    const noResults = document.getElementById('no-products');
+    if (noResults) {
+        if (visibleCount === 0 && (searchTerm || category)) {
+            noResults.innerHTML = `
+                <div class="alert alert-warning text-center">
+                    <h4>⚠️ لا توجد نتائج</h4>
+                    <p>لم نتمكن من العثور على منتجات تطابق بحثك</p>
+                    <button class="btn btn-primary" onclick="resetFilters()">إعادة تعيين الفلتر</button>
+                </div>
+            `;
+            noResults.classList.remove('d-none');
+        } else {
+            noResults.classList.add('d-none');
+        }
+    }
+}
+
+// إعادة تعيين الفلتر
+function resetFilters() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('category-filter').value = '';
+    displayAllProducts();
+}
+
 // اختبار البيانات
 function testData() {
-    console.log('🧪 اختبار البيانات في الرئيسية...');
+    console.log('🧪 اختبار البيانات...');
     const products = getProducts();
-    console.log('📊 المنتجات:', products);
+    console.log('📊 المنتجات في localStorage:', products);
+    
+    // إضافة بيانات تجريبية إذا لم توجد
+    if (products.length === 0) {
+        console.log('⚠️ لا توجد منتجات، جرب إضافة منتج من لوحة التحكم');
+        alert('⚠️ لا توجد منتجات! اذهب إلى لوحة التحكم وأضف بعض المنتجات أولاً.');
+    }
 }
 
 // التهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 الصفحة الرئيسية جاهزة');
+    console.log('🚀 صفحة المنتجات جاهزة');
     testData();
-    displayFeaturedProducts();
+    displayAllProducts();
+    setupFilters();
     updateCartCount();
 });

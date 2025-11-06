@@ -10,31 +10,9 @@ class AdminPanel {
         this.setupEventListeners();
     }
 
-    // تحميل الطلبات من جوجل شيتس
+    // تحميل الطلبات
     async loadOrders() {
         try {
-            // رابط لجوجل شيتس (ستحتاج لإنشائه)
-            const sheetURL = "https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID/gviz/tq?tqx=out:json";
-            
-            const response = await fetch(sheetURL);
-            const text = await response.text();
-            const json = JSON.parse(text.substr(47).slice(0, -2));
-            
-            this.orders = json.table.rows.map((row, index) => ({
-                id: index + 1,
-                name: row.c[0]?.v || 'غير محدد',
-                phone: row.c[1]?.v || 'غير محدد',
-                address: row.c[2]?.v || 'لا يوجد',
-                items: row.c[3]?.v || 'غير محدد',
-                total: row.c[4]?.v || '0',
-                timestamp: new Date().toLocaleString('ar-SA')
-            }));
-            
-            this.renderDashboard();
-            this.renderOrders();
-            
-        } catch (error) {
-            console.error('Error loading orders:', error);
             // بيانات تجريبية للعرض
             this.orders = [
                 {
@@ -61,14 +39,14 @@ class AdminPanel {
             
             this.renderDashboard();
             this.renderOrders();
+            
+        } catch (error) {
+            console.error('Error loading orders:', error);
         }
     }
 
     renderDashboard() {
-        const todayOrders = this.orders.filter(order => {
-            // افترض أن جميع الطلبات اليومية
-            return true;
-        });
+        const todayOrders = this.orders;
 
         const totalRevenue = todayOrders.reduce((sum, order) => {
             const amount = parseFloat(order.total) || 0;
@@ -104,16 +82,16 @@ class AdminPanel {
                 <p><strong>الوقت:</strong> ${order.timestamp}</p>
                 <div class="order-actions">
                     <button class="btn small success" onclick="adminPanel.updateOrder(${order.id}, 'confirmed')">
-                        <i class="fas fa-check"></i> تأكيد
+                        ✓ تأكيد
                     </button>
                     <button class="btn small warning" onclick="adminPanel.updateOrder(${order.id}, 'preparing')">
-                        <i class="fas fa-utensils"></i> تحضير
+                        🍳 تحضير
                     </button>
                     <button class="btn small danger" onclick="adminPanel.updateOrder(${order.id}, 'cancelled')">
-                        <i class="fas fa-times"></i> إلغاء
+                        ✗ إلغاء
                     </button>
-                    <button class="btn small" onclick="adminPanel.callCustomer('${order.phone}')">
-                        <i class="fas fa-phone"></i> اتصل
+                    <button class="btn small primary" onclick="adminPanel.callCustomer('${order.phone}')">
+                        📞 اتصل
                     </button>
                 </div>
             </div>
@@ -137,15 +115,13 @@ class AdminPanel {
         if (order) {
             order.status = status;
             this.renderOrders();
-            
-            // هنا يمكنك إضافة كود لحفظ التغييرات
-            alert(`تم تحديث الطلب #${orderId} إلى: ${this.getStatusText(status)}`);
+            alert('تم تحديث حالة الطلب: ' + this.getStatusText(status));
         }
     }
 
     callCustomer(phone) {
         if (phone && phone !== 'غير محدد') {
-            window.open(`tel:${phone}`, '_blank');
+            window.open('tel:' + phone, '_blank');
         } else {
             alert('رقم الهاتف غير متوفر');
         }
@@ -156,21 +132,6 @@ class AdminPanel {
         setInterval(() => {
             this.loadOrders();
         }, 60000);
-        
-        // التنقل بين الأقسام
-        document.querySelectorAll('.sidebar-menu a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // إزالة النشاط من جميع الروابط
-                document.querySelectorAll('.sidebar-menu a').forEach(l => {
-                    l.classList.remove('active');
-                });
-                
-                // إضافة النشاط للرابط المختار
-                link.classList.add('active');
-            });
-        });
     }
 }
 

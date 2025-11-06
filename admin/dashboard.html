@@ -21,6 +21,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" href="products.html">إدارة المنتجات</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="../index.html">العودة للمتجر</a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -28,33 +31,41 @@
             <!-- المحتوى الرئيسي -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                	
-                <div class="row mt-4">
-    <div class="col-12">
-        <button class="btn btn-success me-2" onclick="addNewProduct()">إضافة منتج جديد</button>
-        <a href="products.html" class="btn btn-outline-primary">إدارة جميع المنتجات</a>
-    </div>
-</div>
-                
                     <h2>لوحة التحكم</h2>
                 </div>
 
+                <!-- البطاقات الإحصائية -->
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card text-white bg-primary mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">المنتجات</h5>
-                                <p class="card-text" id="products-count">0</p>
+                                <p class="card-text display-4" id="products-count">0</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-success" onclick="addSampleProduct()">إضافة منتج تجريبي</button>
+                <!-- أزرار الإجراءات السريعة -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">الإجراءات السريعة</h5>
+                                <button class="btn btn-success me-2" onclick="addNewProduct()">
+                                    إضافة منتج جديد
+                                </button>
+                                <a href="products.html" class="btn btn-outline-primary">
+                                    إدارة جميع المنتجات
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
 
-    <script src="../js/admin.js"></script>
+    <script src="../js/admin-products.js"></script>
 </body>
 </html>

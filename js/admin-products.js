@@ -1,27 +1,24 @@
-// إدارة المنتجات - الإصدار المبسط
+// إدارة المنتجات
 console.log('🛠️ تحميل إدارة المنتجات');
 
-// دالة الإضافة المبسطة
+// دالة الإضافة
 window.addNewProduct = async function() {
-    console.log('🎯 بدء إضافة منتج');
-    
-    // التحقق من Firebase
-    if (typeof db === 'undefined') {
+    if (!db) {
         alert('❌ قاعدة البيانات غير جاهزة');
         return;
     }
     
-    const productName = prompt('📝 اسم المنتج:');
+    const productName = prompt('📝 أدخل اسم المنتج:');
     if (!productName) return;
 
-    const productPrice = prompt('💰 السعر:');
+    const productPrice = prompt('💰 أدخل سعر المنتج:');
     if (!productPrice || isNaN(productPrice)) {
-        alert('❌ السعر غير صحيح');
+        alert('❌ يرجى إدخال سعر صحيح');
         return;
     }
 
-    const productDescription = prompt('📄 الوصف:') || 'لا يوجد وصف';
-    const productCategory = prompt('📂 الفئة:') || 'عام';
+    const productDescription = prompt('📄 أدخل وصف المنتج:') || 'لا يوجد وصف';
+    const productCategory = prompt('📂 أدخل فئة المنتج:') || 'عام';
 
     const newProduct = {
         name: productName,
@@ -33,19 +30,17 @@ window.addNewProduct = async function() {
     };
 
     try {
-        console.log('🔄 جاري الإضافة...', newProduct);
         await addProductToFirebase(newProduct);
         alert(`✅ تم إضافة "${productName}" بنجاح!`);
-        location.reload(); // إعادة تحميل الصفحة
+        displayProductsInAdmin();
+        updateProductsCount();
     } catch (error) {
-        console.error('❌ فشل:', error);
-        alert('❌ فشل في الإضافة - راجع الكونسول');
+        alert('❌ فشل في الإضافة');
     }
 }
 
-// دالة العرض المبسطة
+// دالة العرض
 window.displayProductsInAdmin = async function() {
-    console.log('🔄 عرض المنتجات...');
     const container = document.getElementById('admin-products-container');
     if (!container) return;
 
@@ -54,30 +49,54 @@ window.displayProductsInAdmin = async function() {
         container.innerHTML = '';
 
         if (products.length === 0) {
-            container.innerHTML = '<div class="alert alert-info">لا توجد منتجات</div>';
+            container.innerHTML = `
+                <div class="col-12 text-center py-4">
+                    <div class="text-muted">
+                        <h5>📦 لا توجد منتجات</h5>
+                        <p>استخدم "إضافة منتج جديد" لبدء إضافة منتجاتك</p>
+                    </div>
+                </div>
+            `;
             return;
         }
 
         products.forEach(product => {
             container.innerHTML += `
-                <div class="col-md-4 mb-3">
-                    <div class="card">
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="card h-100">
+                        <img src="${product.image}" class="card-img-top" alt="${product.name}" style="height: 200px; object-fit: cover;">
                         <div class="card-body">
-                            <h5>${product.name}</h5>
-                            <p>السعر: $${product.price}</p>
-                            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.id}')">حذف</button>
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text text-muted">${product.description}</p>
+                            <p class="card-text"><strong>السعر: $${product.price}</strong></p>
+                            <p class="card-text"><small class="text-muted">${product.category}</small></p>
                         </div>
                     </div>
                 </div>
             `;
         });
     } catch (error) {
-        console.error('❌ خطأ في العرض:', error);
+        container.innerHTML = `<div class="alert alert-danger">خطأ في تحميل المنتجات</div>`;
     }
 }
 
-// التهيئة
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🏁 الصفحة جاهزة');
-    displayProductsInAdmin();
-});
+// دالة الإضافة التجريبية
+window.addSampleProduct = async function() {
+    const sampleProduct = {
+        name: "منتج تجريبي",
+        price: 149.99,
+        description: "هذا منتج تجريبي للمتجر",
+        category: "إلكترونيات",
+        image: "https://via.placeholder.com/300x200/28a745/ffffff?text=منتج+تجريبي",
+        dateAdded: new Date().toLocaleDateString('ar-EG')
+    };
+
+    try {
+        await addProductToFirebase(sampleProduct);
+        alert('✅ تم إضافة المنتج التجريبي بنجاح!');
+        displayProductsInAdmin();
+        updateProductsCount();
+    } catch (error) {
+        alert('❌ فشل في الإضافة');
+    }
+}

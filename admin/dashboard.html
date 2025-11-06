@@ -11,15 +11,24 @@
     <div class="container-fluid">
         <div class="row">
             <!-- الشريط الجانبي -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
                 <div class="position-sticky pt-3">
-                    <h4 class="text-white text-center">لوحة التحكم</h4>
+                    <h4 class="text-white text-center mb-4">🛒 متجري</h4>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active text-white" href="dashboard.html">الرئيسية</a>
+                            <a class="nav-link active text-white" href="dashboard.html">
+                                📊 الرئيسية
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="products.html">إدارة المنتجات</a>
+                            <a class="nav-link text-white" href="products.html">
+                                📦 إدارة المنتجات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="../index.html">
+                                🏪 العودة للمتجر
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -28,25 +37,44 @@
             <!-- المحتوى الرئيسي -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h2>لوحة التحكم</h2>
+                    <h2 class="text-primary">📊 لوحة التحكم</h2>
                 </div>
 
+                <!-- البطاقات الإحصائية -->
                 <div class="row">
                     <div class="col-md-4">
                         <div class="card text-white bg-primary mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">المنتجات</h5>
-                                <p class="card-text" id="products-count">0</p>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">📦 المنتجات</h5>
+                                <p class="card-text display-4" id="products-count">0</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-success" onclick="addSampleProduct()">إضافة منتج تجريبي</button>
+                <!-- أزرار الإجراءات السريعة -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">🚀 الإجراءات السريعة</h5>
+                                <button class="btn btn-success me-2" onclick="addNewProduct()">
+                                    ➕ إضافة منتج جديد
+                                </button>
+                                <a href="products.html" class="btn btn-outline-primary">
+                                    📋 إدارة جميع المنتجات
+                                </a>
+                                <button class="btn btn-warning me-2" onclick="addSampleProduct()">
+                                    🧪 إضافة منتجات تجريبية
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
 
-    <script src="../js/admin.js"></script>
+    <script src="../js/admin-products.js"></script>
 </body>
 </html>

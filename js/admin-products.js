@@ -1,27 +1,18 @@
-// إدارة المنتجات - كود منفصل للوحة التحكم
-console.log('✅ تم تحميل كود إدارة المنتجات');
+// إدارة المنتجات مع Firebase
+console.log('✅ تم تحميل إدارة المنتجات');
 
-// جلب المنتجات من localStorage
+// جلب المنتجات
 function getProducts() {
-    const products = JSON.parse(localStorage.getItem('storeProducts')) || [];
-    console.log('📦 عدد المنتجات:', products.length);
-    return products;
+    return getProductsFromFirebase();
 }
 
-// حفظ المنتجات في localStorage
-function saveProducts(products) {
-    localStorage.setItem('storeProducts', JSON.stringify(products));
-    console.log('💾 تم حفظ المنتجات');
-}
-
-// إضافة منتج جديد - نسخة محسنة
-function addNewProduct() {
-    console.log('🎯 تم النقر على إضافة منتج جديد');
+// إضافة منتج جديد
+async function addNewProduct() {
+    console.log('🎯 بدء إضافة منتج جديد');
     
-    // إنشاء نموذج إدخال بديل عن prompt
     const productName = prompt('📝 أدخل اسم المنتج:');
     if (!productName) {
-        console.log('❌ لم يتم إدخال اسم المنتج');
+        alert('❌ يجب إدخال اسم المنتج');
         return;
     }
 
@@ -34,10 +25,7 @@ function addNewProduct() {
     const productDescription = prompt('📄 أدخل وصف المنتج:') || 'لا يوجد وصف مفصل';
     const productCategory = prompt('📂 أدخل فئة المنتج:') || 'عام';
 
-    const products = getProducts();
-    
     const newProduct = {
-        id: Date.now(), // استخدام الوقت كمعرف فريد
         name: productName,
         price: parseFloat(productPrice),
         description: productDescription,
@@ -46,110 +34,106 @@ function addNewProduct() {
         dateAdded: new Date().toLocaleDateString('ar-EG')
     };
 
-    products.push(newProduct);
-    saveProducts(products);
-    
-    // 🔥 الكود المضاف - بداية
-    console.log('💾 تم حفظ المنتجات الجديدة في localStorage');
-    console.log('📋 المنتجات الحالية:', getProducts());
-
-    // تأكد من أن البيانات محفوظة بشكل صحيح
-    const testProducts = JSON.parse(localStorage.getItem('storeProducts')) || [];
-    console.log('✅ اختبار القراءة من localStorage:', testProducts.length, 'منتج');
-    // 🔥 الكود المضاف - نهاية
-    
-    alert(`✅ تم إضافة المنتج "${productName}" بنجاح!`);
-    console.log('🆕 المنتج المضاف:', newProduct);
-    
-    // تحديث العرض
-    displayProductsInAdmin();
-    updateProductsCount();
+    try {
+        await addProductToFirebase(newProduct);
+        alert(`✅ تم إضافة "${productName}" بنجاح للجميع!`);
+        displayProductsInAdmin();
+        updateProductsCount();
+    } catch (error) {
+        console.error('❌ فشل إضافة المنتج:', error);
+    }
 }
 
 // عرض المنتجات في لوحة التحكم
-function displayProductsInAdmin() {
-    console.log('🔄 محاولة عرض المنتجات...');
+async function displayProductsInAdmin() {
+    console.log('🔄 عرض المنتجات في اللوحة...');
     const container = document.getElementById('admin-products-container');
     if (!container) {
-        console.log('❌ لم يتم العثور على admin-products-container');
+        console.log('❌ لم يتم العثور على الحاوية');
         return;
     }
 
-    const products = getProducts();
-    console.log('📊 عدد المنتجات للعرض:', products.length);
+    try {
+        const products = await getProductsFromFirebase();
+        console.log('📊 عدد المنتجات للعرض:', products.length);
 
-    container.innerHTML = '';
+        container.innerHTML = '';
 
-    if (products.length === 0) {
-        container.innerHTML = `
-            <div class="col-12 text-center py-5">
-                <div class="text-muted">
-                    <i class="fas fa-box-open fa-3x mb-3"></i>
-                    <h4>لا توجد منتجات مضافة بعد</h4>
-                    <p>انقر على "إضافة منتج جديد" لبدء إضافة منتجاتك</p>
+        if (products.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted">
+                        <h4>📦 لا توجد منتجات مضافة بعد</h4>
+                        <p>انقر على "إضافة منتج جديد" لبدء إضافة منتجاتك</p>
+                    </div>
                 </div>
-            </div>
-        `;
-        return;
-    }
+            `;
+            return;
+        }
 
-    products.forEach(product => {
-        const productCard = `
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100">
-                    <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">${product.name}</h5>
-                        <p class="card-text">${product.description}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="h5 text-success">$${product.price}</span>
-                            <small class="text-muted">${product.category}</small>
-                        </div>
-                        <div class="mt-3">
-                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">
-                                🗑️ حذف
-                            </button>
-                            <small class="text-muted d-block mt-2">أضيف في: ${product.dateAdded}</small>
+        products.forEach(product => {
+            const productCard = `
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">${product.name}</h5>
+                            <p class="card-text">${product.description}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 text-success">$${product.price}</span>
+                                <small class="text-muted">${product.category}</small>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.id}')">
+                                    🗑️ حذف
+                                </button>
+                                <small class="text-muted d-block mt-2">أضيف في: ${product.dateAdded}</small>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
-        container.innerHTML += productCard;
-    });
+            `;
+            container.innerHTML += productCard;
+        });
+    } catch (error) {
+        console.error('❌ خطأ في عرض المنتجات:', error);
+    }
 }
 
 // حذف المنتج
-function deleteProduct(productId) {
-    if (confirm('⚠️ هل أنت متأكد من حذف هذا المنتج؟')) {
-        const products = getProducts();
-        const productToDelete = products.find(p => p.id === productId);
-        const updatedProducts = products.filter(product => product.id !== productId);
-        saveProducts(updatedProducts);
+async function deleteProduct(productId) {
+    if (!confirm('⚠️ هل أنت متأكد من حذف هذا المنتج؟')) return;
+
+    try {
+        await deleteProductFromFirebase(productId);
+        alert('✅ تم حذف المنتج بنجاح!');
         displayProductsInAdmin();
         updateProductsCount();
-        alert(`✅ تم حذف المنتج "${productToDelete.name}" بنجاح!`);
+    } catch (error) {
+        console.error('❌ فشل حذف المنتج:', error);
     }
 }
 
 // تحديث عدد المنتجات
-function updateProductsCount() {
-    const products = getProducts();
-    const countElement = document.getElementById('products-count');
-    if (countElement) {
-        countElement.textContent = products.length;
-        console.log('🔢 تم تحديث عدد المنتجات:', products.length);
+async function updateProductsCount() {
+    try {
+        const products = await getProductsFromFirebase();
+        const countElement = document.getElementById('products-count');
+        if (countElement) {
+            countElement.textContent = products.length;
+            console.log('🔢 عدد المنتجات:', products.length);
+        }
+    } catch (error) {
+        console.error('❌ خطأ في تحديث العدد:', error);
     }
 }
 
-// إضافة منتج تجريبي للاختبار
-function addSampleProduct() {
-    console.log('🧪 إضافة منتج تجريبي');
-    const products = getProducts();
+// منتجات تجريبية
+async function addSampleProduct() {
+    console.log('🧪 إضافة منتجات تجريبية');
     
     const sampleProducts = [
         {
-            id: Date.now(),
             name: "لابتوب ديل",
             price: 2500,
             description: "لابتوب ممتاز للأعمال والاستخدام اليومي",
@@ -158,7 +142,6 @@ function addSampleProduct() {
             dateAdded: new Date().toLocaleDateString('ar-EG')
         },
         {
-            id: Date.now() + 1,
             name: "هاتف سامسونج",
             price: 1800,
             description: "هاتف ذكي بمواصفات عالية",
@@ -168,39 +151,21 @@ function addSampleProduct() {
         }
     ];
 
-    sampleProducts.forEach(product => {
-        products.push(product);
-    });
-
-    saveProducts(products);
-    
-    // 🔥 الكود المضاف - بداية
-    console.log('💾 تم حفظ المنتجات التجريبية في localStorage');
-    console.log('📋 المنتجات الحالية بعد الإضافة:', getProducts());
-
-    // تأكد من أن البيانات محفوظة بشكل صحيح
-    const testProducts = JSON.parse(localStorage.getItem('storeProducts')) || [];
-    console.log('✅ اختبار القراءة من localStorage:', testProducts.length, 'منتج');
-    // 🔥 الكود المضاف - نهاية
-    
-    displayProductsInAdmin();
-    updateProductsCount();
-    alert('✅ تم إضافة منتجات تجريبية بنجاح!');
+    try {
+        for (const product of sampleProducts) {
+            await addProductToFirebase(product);
+        }
+        alert('✅ تم إضافة المنتجات التجريبية بنجاح!');
+        displayProductsInAdmin();
+        updateProductsCount();
+    } catch (error) {
+        console.error('❌ فشل إضافة المنتجات التجريبية:', error);
+    }
 }
 
-// التهيئة عند تحميل الصفحة
+// التهيئة
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 تم تحميل صفحة لوحة التحكم');
+    console.log('🚀 لوحة التحكم جاهزة');
     displayProductsInAdmin();
     updateProductsCount();
-    
-    // إضافة أزرار إضافية للاختبار
-    const header = document.querySelector('.border-bottom');
-    if (header) {
-        const testButton = document.createElement('button');
-        testButton.className = 'btn btn-warning btn-sm ms-2';
-        testButton.textContent = 'إضافة منتجات تجريبية';
-        testButton.onclick = addSampleProduct;
-        header.appendChild(testButton);
-    }
 });

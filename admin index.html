@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم المطعم</title>
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .admin-container {
             display: flex;
@@ -15,7 +14,7 @@
         
         .admin-sidebar {
             width: 250px;
-            background: var(--secondary-color);
+            background: #2c3e50;
             color: white;
             padding: 20px 0;
         }
@@ -42,20 +41,20 @@
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
             background: #34495e;
-            border-right-color: var(--primary-color);
+            border-right-color: #e74c3c;
         }
         
         .admin-main {
             flex: 1;
             padding: 20px;
-            background: var(--light-bg);
+            background: #f8f9fa;
         }
         
         .admin-header {
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
@@ -73,14 +72,14 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
         
         .stat-number {
             font-size: 2rem;
             font-weight: bold;
-            color: var(--primary-color);
+            color: #e74c3c;
             display: block;
             margin-top: 10px;
         }
@@ -88,7 +87,7 @@
         .orders-container {
             background: white;
             border-radius: 10px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 20px;
         }
         
@@ -97,7 +96,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            background: var(--light-bg);
+            background: #f8f9fa;
         }
         
         .order-header {
@@ -113,14 +112,23 @@
             margin-top: 10px;
         }
         
-        .btn.small {
-            padding: 5px 10px;
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 0.9rem;
         }
         
-        .btn.success { background: #27ae60; }
-        .btn.warning { background: #f39c12; }
-        .btn.danger { background: #e74c3c; }
+        .btn.small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .btn.primary { background: #3498db; color: white; }
+        .btn.success { background: #27ae60; color: white; }
+        .btn.warning { background: #f39c12; color: white; }
+        .btn.danger { background: #e74c3c; color: white; }
         
         .order-status {
             padding: 3px 8px;
@@ -152,11 +160,11 @@
                 <h3>إدارة المطعم</h3>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="#dashboard" class="active"><i class="fas fa-chart-line"></i> لوحة التحكم</a></li>
-                <li><a href="#orders"><i class="fas fa-shopping-cart"></i> الطلبات</a></li>
-                <li><a href="#menu"><i class="fas fa-utensils"></i> القائمة</a></li>
-                <li><a href="#reservations"><i class="fas fa-calendar"></i> الحجوزات</a></li>
-                <li><a href="#reports"><i class="fas fa-chart-bar"></i> التقارير</a></li>
+                <li><a href="#dashboard" class="active">📊 لوحة التحكم</a></li>
+                <li><a href="#orders">🛒 الطلبات</a></li>
+                <li><a href="#menu">🍽️ القائمة</a></li>
+                <li><a href="#reservations">📅 الحجوزات</a></li>
+                <li><a href="#reports">📈 التقارير</a></li>
             </ul>
         </aside>
         
@@ -164,7 +172,7 @@
             <header class="admin-header">
                 <h1>لوحة تحكم المطعم</h1>
                 <button class="btn primary" onclick="loadOrders()">
-                    <i class="fas fa-sync-alt"></i> تحديث
+                    🔄 تحديث
                 </button>
             </header>
             

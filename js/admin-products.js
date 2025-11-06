@@ -49,6 +49,15 @@ function addNewProduct() {
     products.push(newProduct);
     saveProducts(products);
     
+    // 🔥 الكود المضاف - بداية
+    console.log('💾 تم حفظ المنتجات الجديدة في localStorage');
+    console.log('📋 المنتجات الحالية:', getProducts());
+
+    // تأكد من أن البيانات محفوظة بشكل صحيح
+    const testProducts = JSON.parse(localStorage.getItem('storeProducts')) || [];
+    console.log('✅ اختبار القراءة من localStorage:', testProducts.length, 'منتج');
+    // 🔥 الكود المضاف - نهاية
+    
     alert(`✅ تم إضافة المنتج "${productName}" بنجاح!`);
     console.log('🆕 المنتج المضاف:', newProduct);
     
@@ -164,6 +173,16 @@ function addSampleProduct() {
     });
 
     saveProducts(products);
+    
+    // 🔥 الكود المضاف - بداية
+    console.log('💾 تم حفظ المنتجات التجريبية في localStorage');
+    console.log('📋 المنتجات الحالية بعد الإضافة:', getProducts());
+
+    // تأكد من أن البيانات محفوظة بشكل صحيح
+    const testProducts = JSON.parse(localStorage.getItem('storeProducts')) || [];
+    console.log('✅ اختبار القراءة من localStorage:', testProducts.length, 'منتج');
+    // 🔥 الكود المضاف - نهاية
+    
     displayProductsInAdmin();
     updateProductsCount();
     alert('✅ تم إضافة منتجات تجريبية بنجاح!');

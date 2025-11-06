@@ -45,17 +45,20 @@ const menuItems = [
 // سلة التسوق
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-// رابط نموذج جوجل الخاص بك
+// رابط نموذج جوجل
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeK_WJ9LSAZxYqTq0DCZOGJv-gx4n9mA8x0VacFi0aOHuGiXQ/formResponse";
 
-// IDs حقول النموذج (سيتم اكتشافها تلقائياً)
+// IDs حقول النموذج
 const FIELD_IDS = {
-    name: "entry.1251687736",      // اسم العميل
-    phone: "entry.2042799852",     // رقم الهاتف
-    address: "entry.1421803937",   // العنوان
-    items: "entry.1544069091",     // الطلبات
-    total: "entry.1328004331"      // المجموع
+    name: "entry.1251687736",
+    phone: "entry.2042799852",
+    address: "entry.1421803937",
+    items: "entry.1544069091",
+    total: "entry.1328004331"
 };
+
+// رقم واتساب - غير هذا الرقم لرقمك الحقيقي
+const WHATSAPP_NUMBER = "966500000000";
 
 // تهيئة الصفحة
 document.addEventListener('DOMContentLoaded', function() {
@@ -69,10 +72,9 @@ function displayMenuItems() {
     const menuContainer = document.getElementById('menuItems');
     
     menuContainer.innerHTML = menuItems.map(item => `
-        <div class="menu-item" data-category="${item.category}">
+        <div class="menu-item">
             <div class="item-image">
-                ${item.image ? `<img src="images/${item.image}" alt="${item.name}" onerror="this.style.display='none'">` : ''}
-                <span>${item.name}</span>
+                ${item.name}
             </div>
             <div class="item-content">
                 <div class="item-header">
@@ -153,7 +155,7 @@ function displayCartItems() {
                 </div>
             </div>
             <button class="remove-item" onclick="removeFromCart(${item.id})" title="إزالة">
-                <i class="fas fa-trash"></i>
+                ✗
             </button>
         </div>
     `).join('');
@@ -180,7 +182,9 @@ function removeFromCart(itemId) {
     const item = cart.find(i => i.id === itemId);
     cart = cart.filter(item => item.id !== itemId);
     updateCart();
-    showNotification(`تم إزالة ${item.name} من السلة`);
+    if (item) {
+        showNotification(`تم إزالة ${item.name} من السلة`);
+    }
 }
 
 // إعداد مستمعي الأحداث
@@ -263,7 +267,6 @@ async function submitOrder() {
         
     } catch (error) {
         showNotification('حدث خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى.', 'error');
-        console.error('Error submitting order:', error);
     } finally {
         // إعادة تفعيل الزر
         submitBtn.disabled = false;
@@ -275,14 +278,12 @@ async function submitOrder() {
 async function sendToGoogleForm(orderData) {
     const formData = new FormData();
     
-    // إضافة البيانات للحقول الصحيحة
     formData.append(FIELD_IDS.name, orderData.name);
     formData.append(FIELD_IDS.phone, orderData.phone);
     formData.append(FIELD_IDS.address, orderData.address || 'لا يوجد عنوان');
     formData.append(FIELD_IDS.items, orderData.items);
     formData.append(FIELD_IDS.total, orderData.total + ' ر.س');
     
-    // إرسال البيانات
     const response = await fetch(GOOGLE_FORM_URL, {
         method: 'POST',
         body: formData,
@@ -294,10 +295,8 @@ async function sendToGoogleForm(orderData) {
 
 // إرسال إلى واتساب
 function sendToWhatsApp(orderData) {
-    const phoneNumber = "966500000000"; // ضع رقم واتسابك هنا
-    
     const message = `🎉 طلب جديد! 
-    
+
 العميل: ${orderData.name}
 الهاتف: ${orderData.phone}
 العنوان: ${orderData.address || 'لا يوجد عنوان'}
@@ -309,9 +308,7 @@ ${orderData.items}
 
 شكراً لاستخدامكم مطعمنا! 🍔`;
     
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    // فتح واتساب في نافذة جديدة
+    const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(whatsappURL, '_blank');
 }
 
@@ -324,7 +321,6 @@ function resetCart() {
 
 // إظهار إشعار
 function showNotification(message, type = 'info') {
-    // إنصراف عنصر الإشعار
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
@@ -339,17 +335,12 @@ function showNotification(message, type = 'info') {
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 1003;
         max-width: 300px;
-        animation: slideIn 0.3s ease;
     `;
     
     document.body.appendChild(notification);
     
-    // إزالة الإشعار بعد 5 ثوانٍ
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
+        document.body.removeChild(notification);
     }, 5000);
 }
 
@@ -357,18 +348,3 @@ function showNotification(message, type = 'info') {
 function scrollToMenu() {
     document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
 }
-
-// إضافة أنيميشن للإشعارات
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-`;
-document.head.appendChild(style);

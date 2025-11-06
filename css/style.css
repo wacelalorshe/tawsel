@@ -1,92 +1,229 @@
-/* تنسيقات عامة */
+/* تنسيقات عامة محسنة */
+:root {
+    --primary-color: #2c5aa0;
+    --secondary-color: #f8f9fa;
+    --accent-color: #ff6b35;
+    --text-dark: #2d3748;
+    --text-light: #718096;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
     line-height: 1.6;
 }
 
-/* الشريط الجانبي */
+/* تصميم جديد للشريط الجانبي */
 .sidebar {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    background: linear-gradient(180deg, var(--primary-color) 0%, #1e3a8a 100%);
+    box-shadow: var(--shadow);
+    padding: 0;
 }
 
 .sidebar .nav-link {
     color: #fff !important;
-    padding: 12px 20px;
-    margin: 5px 0;
-    border-radius: 5px;
-    transition: all 0.3s;
+    padding: 15px 20px;
+    margin: 8px 15px;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: none;
 }
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-    background-color: rgba(255,255,255,0.2);
-    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* البطاقات */
+.sidebar .nav-link i {
+    margin-left: 10px;
+    font-size: 1.1em;
+}
+
+/* تصميم البطاقات المحسن */
 .card {
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    margin-bottom: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    margin-bottom: 25px;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* الأزرار */
-.btn {
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.btn-success {
-    background: linear-gradient(45deg, #28a745, #20c997);
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+    color: white;
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    padding: 20px;
     border: none;
+}
+
+/* تصميم الأزرار المحسن */
+.btn {
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-    border: none;
+    background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
 
-.btn-danger {
-    background: linear-gradient(45deg, #dc3545, #c82333);
-    border: none;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
 }
 
-/* الرأس */
-.border-bottom {
-    border-bottom: 2px solid #e9ecef !important;
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
 }
 
-/* النصوص */
-.text-primary {
-    color: #007bff !important;
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
 }
 
-/* تنسيقات خاصة بالمنتجات */
+.btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+/* تصميم المنتجات */
+.product-card {
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-5px);
+}
+
 .product-image {
-    height: 200px;
+    height: 250px;
     object-fit: cover;
-    border-radius: 8px 8px 0 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    transition: transform 0.3s ease;
 }
 
-/* تنسيقات لوحة التحكم */
-.display-4 {
-    font-size: 2.5rem;
-    font-weight: bold;
+.product-card:hover .product-image {
+    transform: scale(1.05);
 }
 
-.display-6 {
-    font-size: 1.8rem;
+.product-price {
+    font-size: 1.5em;
     font-weight: bold;
+    color: var(--primary-color);
+}
+
+.product-category {
+    background: var(--primary-color);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+}
+
+/* تصميم النماذج */
+.form-control, .form-select {
+    border-radius: var(--radius);
+    border: 2px solid #e2e8f0;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* تصميم الهيدر */
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: var(--primary-color) !important;
+}
+
+/* تصميم الفوتر */
+.footer {
+    background: var(--text-dark);
+    color: white;
+    padding: 40px 0;
+    margin-top: 60px;
+}
+
+/* تصميم متجاوب */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* رسوم متحركة */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* تحميل */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

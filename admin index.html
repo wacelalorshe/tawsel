@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المطعم</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h3>لوحة التحكم</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#dashboard" class="active">الرئيسية</a></li>
+                <li><a href="#orders">الطلبات</a></li>
+                <li><a href="#menu">إدارة القائمة</a></li>
+                <li><a href="#reservations">الحجوزات</a></li>
+                <li><a href="#reports">التقارير</a></li>
+                <li><a href="../index.html">العودة للموقع</a></li>
+            </ul>
+        </aside>
+        
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>لوحة تحكم المطعم</h1>
+                <div class="admin-actions">
+                    <button class="btn primary">طلب جديد</button>
+                </div>
+            </header>
+            
+            <section id="dashboard" class="admin-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>الطلبات اليوم</h3>
+                        <span class="stat-number">15</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>الإيرادات</h3>
+                        <span class="stat-number">1,250 ر.س</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>الحجوزات</h3>
+                        <span class="stat-number">8</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>التقييم</h3>
+                        <span class="stat-number">4.8/5</span>
+                    </div>
+                </div>
+                
+                <div class="recent-orders">
+                    <h2>أحدث الطلبات</h2>
+                    <div class="orders-list">
+                        <!-- قائمة الطلبات -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

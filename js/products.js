@@ -11,6 +11,25 @@ let currentCategory = '';
 let currentSearchTerm = '';
 let currentSort = 'newest';
 
+// التحقق من توفر الدوال المطلوبة
+function checkRequiredFunctions() {
+    const requiredFunctions = ['getProductsFromFirebase', 'addToCart', 'buyNow'];
+    const missingFunctions = [];
+    
+    requiredFunctions.forEach(func => {
+        if (typeof window[func] === 'undefined') {
+            missingFunctions.push(func);
+        }
+    });
+    
+    if (missingFunctions.length > 0) {
+        console.error('❌ الدوال المطلوبة غير متاحة:', missingFunctions);
+        return false;
+    }
+    
+    return true;
+}
+
 // عرض جميع المنتجات
 async function displayAllProducts(page = 1, append = false) {
     console.log('🔄 جلب المنتجات للعملاء...');
@@ -21,6 +40,23 @@ async function displayAllProducts(page = 1, append = false) {
     const loadMoreContainer = document.getElementById('load-more-container');
     
     if (!container) return;
+
+    // التحقق من توفر الدوال المطلوبة
+    if (!checkRequiredFunctions()) {
+        container.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <h5>خطأ في تحميل النظام</h5>
+                    <p class="mb-3">بعض الملفات المطلوبة غير محملة بشكل صحيح</p>
+                    <button class="btn btn-outline-danger" onclick="location.reload()">
+                        <i class="fas fa-redo me-2"></i>إعادة تحميل الصفحة
+                    </button>
+                </div>
+            </div>
+        `;
+        return;
+    }
 
     try {
         // إذا كانت هذه هي الصفحة الأولى، إعادة تعيين البيانات
@@ -110,6 +146,9 @@ async function displayAllProducts(page = 1, append = false) {
 
 // إنشاء بطاقة منتج بتصميم الشبكة
 function createGridProductCard(product) {
+    const isInCart = window.isInCart ? window.isInCart(product.id) : false;
+    const cartQuantity = window.getCartQuantity ? window.getCartQuantity(product.id) : 0;
+    
     return `
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100 product-card">
@@ -117,22 +156,50 @@ function createGridProductCard(product) {
                     <img src="${product.image}" class="card-img-top product-image" alt="${product.name}"
                          onerror="this.src='https://via.placeholder.com/300x200/cccccc/ffffff?text=صورة+غير+متاحة'">
                     <span class="badge bg-primary product-badge">${product.category}</span>
+                    ${product.purchaseLink ? `
+                        <span class="badge bg-success position-absolute top-0 end-0 m-2">متوفر للشراء</span>
+                    ` : ''}
                 </div>
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${product.name}</h5>
                     <p class="card-text text-muted flex-grow-1">${product.description}</p>
+                    
+                    <div class="product-meta mb-3">
+                        ${product.restaurantName ? `
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-store text-muted me-2"></i>
+                                <small class="text-muted">${product.restaurantName}</small>
+                            </div>
+                        ` : ''}
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-tag text-muted me-2"></i>
+                            <small class="text-muted">${product.category}</small>
+                        </div>
+                    </div>
+                    
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <span class="h5 text-primary price-tag">$${product.price}</span>
-                        <div>
-                            <button class="btn btn-success me-2" 
-                                    onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}')">
-                                <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                        <div class="d-flex gap-2">
+                            ${isInCart ? `
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity('${product.id}', ${cartQuantity - 1})">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <span class="mx-2 fw-bold">${cartQuantity}</span>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity('${product.id}', ${cartQuantity + 1})">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            ` : `
+                                <button class="btn btn-success" 
+                                        onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}', '${product.restaurantId || ''}', '${product.restaurantName || ''}')">
+                                    <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                                </button>
+                            `}
+                            <button class="btn btn-primary" 
+                                    onclick="buyNow('${product.id}', '${product.name}', ${product.price}, '${product.image}', '${product.restaurantId || ''}', '${product.restaurantName || ''}')">
+                                <i class="fas fa-bolt me-1"></i>شراء الآن
                             </button>
-                            ${product.purchaseLink ? `
-                                <a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary">
-                                    <i class="fas fa-shopping-cart me-1"></i>شراء
-                                </a>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -143,6 +210,9 @@ function createGridProductCard(product) {
 
 // إنشاء بطاقة منتج بتصميم القائمة
 function createListProductCard(product) {
+    const isInCart = window.isInCart ? window.isInCart(product.id) : false;
+    const cartQuantity = window.getCartQuantity ? window.getCartQuantity(product.id) : 0;
+    
     return `
         <div class="col-12 mb-4">
             <div class="card product-card">
@@ -159,18 +229,43 @@ function createListProductCard(product) {
                         <div class="card-body d-flex flex-column h-100">
                             <h5 class="card-title">${product.name}</h5>
                             <p class="card-text text-muted flex-grow-1">${product.description}</p>
+                            
+                            <div class="product-meta mb-3">
+                                ${product.restaurantName ? `
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-store text-muted me-2"></i>
+                                        <small class="text-muted">${product.restaurantName}</small>
+                                    </div>
+                                ` : ''}
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tag text-muted me-2"></i>
+                                    <small class="text-muted">${product.category}</small>
+                                </div>
+                            </div>
+                            
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <span class="h5 text-primary price-tag">$${product.price}</span>
-                                <div>
-                                    <button class="btn btn-success me-2" 
-                                            onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}')">
-                                        <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                                <div class="d-flex gap-2">
+                                    ${isInCart ? `
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity('${product.id}', ${cartQuantity - 1})">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <span class="mx-2 fw-bold">${cartQuantity}</span>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="updateCartQuantity('${product.id}', ${cartQuantity + 1})">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    ` : `
+                                        <button class="btn btn-success" 
+                                                onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}', '${product.restaurantId || ''}', '${product.restaurantName || ''}')">
+                                            <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                                        </button>
+                                    `}
+                                    <button class="btn btn-primary" 
+                                            onclick="buyNow('${product.id}', '${product.name}', ${product.price}, '${product.image}', '${product.restaurantId || ''}', '${product.restaurantName || ''}')">
+                                        <i class="fas fa-bolt me-1"></i>شراء الآن
                                     </button>
-                                    ${product.purchaseLink ? `
-                                        <a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary">
-                                            <i class="fas fa-shopping-cart me-1"></i>شراء
-                                        </a>
-                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -190,7 +285,8 @@ function applyFiltersAndSort() {
         filteredProducts = filteredProducts.filter(product => 
             product.name.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
             product.description.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
-            product.category.toLowerCase().includes(currentSearchTerm.toLowerCase())
+            product.category.toLowerCase().includes(currentSearchTerm.toLowerCase()) ||
+            (product.restaurantName && product.restaurantName.toLowerCase().includes(currentSearchTerm.toLowerCase()))
         );
     }
     

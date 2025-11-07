@@ -12,17 +12,23 @@ const firebaseConfig = {
 };
 
 // التحقق و التهيئة
-if (typeof firebase !== 'undefined') {
-    try {
-        firebase.initializeApp(firebaseConfig);
+try {
+    if (typeof firebase !== 'undefined') {
+        // تهيئة Firebase
+        const app = firebase.initializeApp(firebaseConfig);
         console.log('✅ تم تهيئة Firebase بنجاح');
-    } catch (error) {
-        console.error('❌ خطأ في التهيئة:', error);
+        
+        // كائن قاعدة البيانات
+        window.db = firebase.firestore();
+        console.log('🗄️ قاعدة البيانات جاهزة');
+        
+        // تمكين التخزين المحلي
+        window.db.enablePersistence()
+            .then(() => console.log('💾 تم تمكين التخزين المحلي'))
+            .catch(err => console.log('❌ خطأ في التخزين المحلي:', err));
+    } else {
+        console.error('❌ مكتبة Firebase غير محملة');
     }
-} else {
-    console.error('❌ مكتبة Firebase غير محملة');
+} catch (error) {
+    console.error('❌ خطأ في التهيئة:', error);
 }
-
-// كائن قاعدة البيانات
-const db = typeof firebase !== 'undefined' ? firebase.firestore() : null;
-console.log('🗄️ قاعدة البيانات:', db ? 'جاهزة' : 'غير جاهزة');

@@ -5,34 +5,240 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجري الإلكتروني - الرئيسية</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link href="css/style.css" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/firebase-db.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        /* تحسينات عامة */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 100px 0;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #3a9d3a);
+            border: none;
+        }
+        
+        .feature-box {
+            padding: 30px 20px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .feature-box i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        /* تحسينات الشريط الجانبي */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: #fff !important;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+        
+        /* بطاقات الإحصائيات */
+        .stat-card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* تحسينات البحث */
+        .search-container {
+            position: relative;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        /* تحسينات لوحة التحكم */
+        .admin-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .admin-card .card-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* تحسينات المنتجات */
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+        
+        .price-tag {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* تحسينات الفوتر */
+        footer {
+            background: var(--dark-color);
+            color: white;
+        }
+        
+        /* تحسينات التحميل */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* تحسينات التجاوب */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- شريط التنقل -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">🛒 متجري</a>
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-store me-2"></i>متجري الإلكتروني
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.html">🏠 الرئيسية</a>
+                        <a class="nav-link active" href="index.html">
+                            <i class="fas fa-home me-1"></i> الرئيسية
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="products.html">📦 المنتجات</a>
+                        <a class="nav-link" href="products.html">
+                            <i class="fas fa-box me-1"></i> المنتجات
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.html">ℹ️ من نحن</a>
+                        <a class="nav-link" href="about.html">
+                            <i class="fas fa-info-circle me-1"></i> من نحن
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">📞 اتصل بنا</a>
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-phone me-1"></i> اتصل بنا
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin/dashboard.html">
+                            <i class="fas fa-cog me-1"></i> لوحة التحكم
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -40,47 +246,73 @@
     </nav>
 
     <!-- قسم الهيرو -->
-    <section class="hero-section bg-primary text-white py-5">
+    <section class="hero-section text-white">
         <div class="container text-center">
-            <h1 class="display-4 fw-bold">مرحبا بكم في متجرنا</h1>
-            <p class="lead">أفضل المنتجات بأفضل الأسعار مع خدمة عملاء متميزة</p>
-            <a href="products.html" class="btn btn-light btn-lg mt-3">🛍️ ابدأ التسوق الآن</a>
+            <h1 class="display-4 fw-bold mb-4">مرحباً بكم في متجرنا الإلكتروني</h1>
+            <p class="lead mb-4">اكتشف أحدث المنتجات بأفضل الأسعار مع خدمة عملاء متميزة</p>
+            <a href="products.html" class="btn btn-light btn-lg mt-3">
+                <i class="fas fa-shopping-bag me-2"></i> ابدأ التسوق الآن
+            </a>
+        </div>
+    </section>
+
+    <!-- شريط البحث -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="search-container">
+                        <input type="text" id="global-search" class="form-control form-control-lg" placeholder="ابحث عن منتج...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- أحدث المنتجات -->
     <section class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">🆕 أحدث المنتجات</h2>
+            <h2 class="text-center mb-5 display-5 fw-bold">أحدث المنتجات</h2>
             <div id="featured-products" class="row">
                 <!-- المنتجات تُحمّل من JavaScript -->
+                <div class="col-12 text-center">
+                    <div class="loading-spinner"></div>
+                    <p class="mt-3">جاري تحميل المنتجات...</p>
+                </div>
             </div>
             <div class="text-center mt-4">
-                <a href="products.html" class="btn btn-primary">عرض جميع المنتجات</a>
+                <a href="products.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-list me-2"></i> عرض جميع المنتجات
+                </a>
             </div>
         </div>
     </section>
 
     <!-- المميزات -->
-    <section class="bg-light py-5">
+    <section class="py-5 bg-light">
         <div class="container">
+            <h2 class="text-center mb-5 display-5 fw-bold">لماذا تختار متجرنا؟</h2>
             <div class="row text-center">
-                <div class="col-md-4">
+                <div class="col-md-4 mb-4">
                     <div class="feature-box">
-                        <h3>🚚 شحن سريع</h3>
-                        <p>شحن مجاني لجميع الطلبات فوق 100 ريال</p>
+                        <i class="fas fa-shipping-fast"></i>
+                        <h3>شحن سريع</h3>
+                        <p>شحن مجاني لجميع الطلبات فوق 100 ريال مع توصيل في نفس اليوم</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 mb-4">
                     <div class="feature-box">
-                        <h3>🔒 دفع آمن</h3>
-                        <p>أنظمة دفع إلكتروني آمنة ومشفرة</p>
+                        <i class="fas fa-lock"></i>
+                        <h3>دفع آمن</h3>
+                        <p>أنظمة دفع إلكتروني آمنة ومشفرة لحماية معلوماتك</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 mb-4">
                     <div class="feature-box">
-                        <h3>📞 دعم فني</h3>
-                        <p>دعم فني متاح 24/7 لخدمتكم</p>
+                        <i class="fas fa-headset"></i>
+                        <h3>دعم فني</h3>
+                        <p>دعم فني متاح 24/7 لخدمتكم عبر الهاتف والواتساب والبريد</p>
                     </div>
                 </div>
             </div>
@@ -88,12 +320,114 @@
     </section>
 
     <!-- الفوتر -->
-    <footer class="bg-dark text-white py-4">
+    <footer class="py-4">
         <div class="container text-center">
-            <p>&copy; 2024 متجري الإلكتروني. جميع الحقوق محفوظة.</p>
+            <p class="mb-0">&copy; 2024 متجري الإلكتروني. جميع الحقوق محفوظة.</p>
+            <div class="mt-2">
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+            </div>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-db.js"></script>
+    <script>
+        // كود الصفحة الرئيسية مع Firebase
+        console.log('✅ تم تحميل الصفحة الرئيسية');
+
+        // عرض المنتجات المميزة
+        async function displayFeaturedProducts() {
+            const container = document.getElementById('featured-products');
+            if (!container) return;
+
+            try {
+                const products = await getProductsFromFirebase();
+                container.innerHTML = '';
+
+                // عرض آخر 6 منتجات
+                const featuredProducts = products.slice(-6).reverse();
+
+                if (featuredProducts.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-12 text-center">
+                            <div class="alert alert-info p-4">
+                                <h4><i class="fas fa-shopping-bag me-2"></i>مرحبا بكم في متجرنا!</h4>
+                                <p class="mb-3">لم يتم إضافة منتجات بعد</p>
+                                <a href="admin/dashboard.html" class="btn btn-primary mt-2">
+                                    <i class="fas fa-plus me-2"></i>إضافة منتجات
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                featuredProducts.forEach(product => {
+                    const productCard = `
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 product-card">
+                                <div class="position-relative">
+                                    <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
+                                    <span class="badge bg-primary product-badge">${product.category}</span>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">${product.name}</h5>
+                                    <p class="card-text text-muted flex-grow-1">${product.description.substring(0, 100)}...</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <span class="h5 text-primary price-tag">$${product.price}</span>
+                                        <div>
+                                            <button class="btn btn-success me-2" onclick="addToCart('${product.id}')">
+                                                <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                                            </button>
+                                            ${product.purchaseLink ? `<a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary">
+                                                <i class="fas fa-shopping-cart me-1"></i>شراء
+                                            </a>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += productCard;
+                });
+            } catch (error) {
+                console.error('❌ خطأ في عرض المنتجات المميزة:', error);
+                container.innerHTML = `
+                    <div class="col-12 text-center">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>حدث خطأ في تحميل المنتجات
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // البحث العالمي
+        document.getElementById('global-search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length > 2) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        // التهيئة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 الصفحة الرئيسية جاهزة');
+            displayFeaturedProducts();
+            
+            // تحديث تلقائي
+            if (typeof setupProductsListener === 'function') {
+                setupProductsListener(function(products) {
+                    displayFeaturedProducts();
+                });
+            }
+        });
+    </script>
 </body>
 </html>

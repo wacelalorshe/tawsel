@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة التسوق - وسيل ستور</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2E86AB;
+            --secondary-color: #A23B72;
+            --accent-color: #F18F01;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-store me-2"></i>وسيل ستور
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i> الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">
+                            <i class="fas fa-box me-1"></i> المنتجات
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link active" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> السلة
+                            <span id="cart-count" class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحة -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">
+                    <i class="fas fa-shopping-cart me-2"></i>سلة التسوق
+                </h1>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">منتجاتك</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="cart-items">
+                            <!-- محتويات السلة تُحمّل من JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="cart-summary">
+                    <h4 class="mb-4">ملخص الطلب</h4>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>عدد المنتجات:</span>
+                        <span id="items-count">0</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>مجموع الطلب:</span>
+                        <span>$<span id="cart-total">0.00</span></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>التوصيل:</span>
+                        <span class="text-success">مجاني</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <strong>المجموع الكلي:</strong>
+                        <strong class="text-primary">$<span id="final-total">0.00</span></strong>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100 py-3" id="checkout-btn">
+                        <i class="fas fa-credit-card me-2"></i>إتمام الشراء
+                    </button>
+                    
+                    <a href="products.html" class="btn btn-outline-secondary w-100 mt-3">
+                        <i class="fas fa-arrow-left me-2"></i>مواصلة التسوق
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // تحديث ملخص الطلب
+        function updateOrderSummary() {
+            const cart = getCart();
+            const itemsCount = cart.reduce((total, item) => total + item.quantity, 0);
+            const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            
+            document.getElementById('items-count').textContent = itemsCount;
+            document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
+            document.getElementById('final-total').textContent = cartTotal.toFixed(2);
+        }
+        
+        // إتمام عملية الشراء
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            const cart = getCart();
+            
+            if (cart.length === 0) {
+                alert('❌ سلة التسوق فارغة. أضف منتجات قبل إتمام الشراء.');
+                return;
+            }
+            
+            alert('✅ شكراً لك! تم استلام طلبك بنجاح. سيتم التواصل معك قريباً.');
+            
+            // تفريغ السلة بعد إتمام الشراء
+            localStorage.removeItem('wacelStoreCart');
+            displayCartItems();
+            updateCartCount();
+        });
+        
+        // تحديث ملخص الطلب عند تغيير السلة
+        function onCartUpdate() {
+            updateOrderSummary();
+        }
+        
+        // التهيئة
+        document.addEventListener('DOMContentLoaded', function() {
+            displayCartItems();
+            updateOrderSummary();
+            
+            // إضافة مستمع لتحديث ملخص الطلب عند تغيير السلة
+            const originalDisplayCartItems = window.displayCartItems;
+            window.displayCartItems = function() {
+                originalDisplayCartItems();
+                updateOrderSummary();
+            };
+        });
+    </script>
+</body>
+</html>

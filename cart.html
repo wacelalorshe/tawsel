@@ -11,6 +11,11 @@
             --primary-color: #2E86AB;
             --secondary-color: #A23B72;
             --accent-color: #F18F01;
+            --light-color: #f8f9fa;
+            --dark-color: #2B2D42;
+            --success-color: #4bb543;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
         }
         
         body {
@@ -21,6 +26,11 @@
         .cart-item {
             border-bottom: 1px solid #eee;
             padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-item:hover {
+            background-color: #f8f9fa;
         }
         
         .cart-item:last-child {
@@ -32,13 +42,15 @@
             border-radius: 10px;
             padding: 25px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 20px;
         }
         
         .cart-badge {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #dc3545;
+            background: var(--danger-color);
             color: white;
             border-radius: 50%;
             width: 20px;
@@ -47,6 +59,54 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        
+        .empty-cart {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .empty-cart-icon {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #3a9d3a);
+            border: none;
+        }
+        
+        .input-group {
+            max-width: 150px;
+        }
+        
+        .input-group .btn {
+            padding: 8px 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .cart-summary {
+                position: static;
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
@@ -93,105 +153,150 @@
             </div>
         </div>
         
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">منتجاتك</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="cart-items">
-                            <!-- محتويات السلة تُحمّل من JavaScript -->
+        <!-- سلة فارغة -->
+        <div id="empty-cart" class="empty-cart d-none">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3 class="text-muted">سلة التسوق فارغة</h3>
+            <p class="text-muted mb-4">لم تقم بإضافة أي منتجات إلى سلة التسوق بعد</p>
+            <a href="products.html" class="btn btn-primary">
+                <i class="fas fa-shopping-bag me-2"></i>تصفح المنتجات
+            </a>
+        </div>
+        
+        <!-- محتوى السلة -->
+        <div id="cart-content">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">منتجاتك</h5>
+                            <button class="btn btn-sm btn-outline-danger" onclick="clearCart()">
+                                <i class="fas fa-trash me-1"></i>إفراغ السلة
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- معلومات المطعم (لنظام التوصيل) -->
+                            <div id="restaurant-info"></div>
+                            
+                            <!-- عناصر السلة -->
+                            <div id="cart-items">
+                                <!-- المحتويات تُحمّل من JavaScript -->
+                            </div>
+                            
+                            <!-- ترويج -->
+                            <div class="mt-4 p-3 bg-light rounded">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-gift text-primary me-3 fs-4"></i>
+                                    <div>
+                                        <h6 class="mb-1">عرض خاص!</h6>
+                                        <p class="mb-0 text-muted">اطلب بأكثر من $100 واحصل على شحن مجاني</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="col-lg-4">
-                <div class="cart-summary">
-                    <h4 class="mb-4">ملخص الطلب</h4>
-                    
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>عدد المنتجات:</span>
-                        <span id="items-count">0</span>
+                
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h4 class="mb-4">ملخص الطلب</h4>
+                        
+                        <div id="order-summary">
+                            <!-- ملخص الطلب يُحمّل من JavaScript -->
+                        </div>
+                        
+                        <button class="btn btn-primary w-100 py-3 mb-3" onclick="proceedToCheckout()">
+                            <i class="fas fa-credit-card me-2"></i>إتمام الشراء
+                        </button>
+                        
+                        <a href="products.html" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left me-2"></i>مواصلة التسوق
+                        </a>
+                        
+                        <!-- معلومات إضافية -->
+                        <div class="mt-4 pt-3 border-top">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-shipping-fast text-success me-2"></i>
+                                <small class="text-muted">شحن سريع خلال 2-3 أيام</small>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                <small class="text-muted">دفع آمن ومضمون</small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-undo text-info me-2"></i>
+                                <small class="text-muted">إرجاع مجاني خلال 14 يوم</small>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>مجموع الطلب:</span>
-                        <span>$<span id="cart-total">0.00</span></span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>التوصيل:</span>
-                        <span class="text-success">مجاني</span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="d-flex justify-content-between mb-4">
-                        <strong>المجموع الكلي:</strong>
-                        <strong class="text-primary">$<span id="final-total">0.00</span></strong>
-                    </div>
-                    
-                    <button class="btn btn-primary w-100 py-3" id="checkout-btn">
-                        <i class="fas fa-credit-card me-2"></i>إتمام الشراء
-                    </button>
-                    
-                    <a href="products.html" class="btn btn-outline-secondary w-100 mt-3">
-                        <i class="fas fa-arrow-left me-2"></i>مواصلة التسوق
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- الفوتر -->
+    <footer class="py-4 bg-dark text-white mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 وسيل ستور. جميع الحقوق محفوظة.</p>
+            <div class="mt-2">
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/cart.js"></script>
     <script>
         // تحديث ملخص الطلب
-        function updateOrderSummary() {
-            const cart = getCart();
-            const itemsCount = cart.reduce((total, item) => total + item.quantity, 0);
-            const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+        function updateOrderSummary(subtotal, shipping, tax, total) {
+            const summaryHTML = `
+                <div class="d-flex justify-content-between mb-3">
+                    <span>المجموع الفرعي:</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <span>رسوم الشحن:</span>
+                    <span>$${shipping.toFixed(2)}</span>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <span>الضريبة (5%):</span>
+                    <span>$${tax.toFixed(2)}</span>
+                </div>
+                
+                ${subtotal < 100 ? `
+                    <div class="alert alert-warning py-2 mb-3">
+                        <small><i class="fas fa-info-circle me-1"></i> أضف $${(100 - subtotal).toFixed(2)} أخرى للحصول على شحن مجاني</small>
+                    </div>
+                ` : `
+                    <div class="alert alert-success py-2 mb-3">
+                        <small><i class="fas fa-check-circle me-1"></i> مؤهل للشحن المجاني</small>
+                    </div>
+                `}
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-4">
+                    <strong>المجموع الكلي:</strong>
+                    <strong class="text-primary">$${total.toFixed(2)}</strong>
+                </div>
+            `;
             
-            document.getElementById('items-count').textContent = itemsCount;
-            document.getElementById('cart-total').textContent = cartTotal.toFixed(2);
-            document.getElementById('final-total').textContent = cartTotal.toFixed(2);
-        }
-        
-        // إتمام عملية الشراء
-        document.getElementById('checkout-btn').addEventListener('click', function() {
-            const cart = getCart();
-            
-            if (cart.length === 0) {
-                alert('❌ سلة التسوق فارغة. أضف منتجات قبل إتمام الشراء.');
-                return;
+            const orderSummary = document.getElementById('order-summary');
+            if (orderSummary) {
+                orderSummary.innerHTML = summaryHTML;
             }
-            
-            alert('✅ شكراً لك! تم استلام طلبك بنجاح. سيتم التواصل معك قريباً.');
-            
-            // تفريغ السلة بعد إتمام الشراء
-            localStorage.removeItem('wacelStoreCart');
-            displayCartItems();
-            updateCartCount();
-        });
-        
-        // تحديث ملخص الطلب عند تغيير السلة
-        function onCartUpdate() {
-            updateOrderSummary();
         }
         
         // التهيئة
         document.addEventListener('DOMContentLoaded', function() {
             displayCartItems();
-            updateOrderSummary();
-            
-            // إضافة مستمع لتحديث ملخص الطلب عند تغيير السلة
-            const originalDisplayCartItems = window.displayCartItems;
-            window.displayCartItems = function() {
-                originalDisplayCartItems();
-                updateOrderSummary();
-            };
         });
     </script>
 </body>

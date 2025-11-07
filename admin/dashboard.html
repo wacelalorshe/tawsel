@@ -5,39 +5,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - متجري الإلكتروني</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
-    
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="../js/firebase-admin.js"></script>
-    <!-- 🔥 مكتبات Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="../js/firebase-config.js"></script>
-    <script src="../js/firebase-db.js"></script>
-    <script src="../js/admin-products.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        /* تحسينات الشريط الجانبي */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: #fff !important;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+        
+        /* بطاقات الإحصائيات */
+        .stat-card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        /* تحسينات عامة */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #3a9d3a);
+            border: none;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, var(--warning-color), #e0a800);
+            border: none;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #c82333);
+            border: none;
+        }
+        
+        .admin-card .card-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        /* تحسينات التحميل */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* تحسينات المنتجات */
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .admin-product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .price-tag {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* تحسينات التجاوب */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-height: auto;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <!-- الشريط الجانبي -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar bg-dark">
                 <div class="position-sticky pt-3">
-                    <h4 class="text-white text-center mb-4">🛒 متجري</h4>
+                    <h4 class="text-white text-center mb-4">
+                        <i class="fas fa-store me-2"></i>متجري
+                    </h4>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link active text-white" href="dashboard.html">
-                                📊 الرئيسية
+                                <i class="fas fa-tachometer-alt me-2"></i>لوحة التحكم
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" href="products.html">
-                                📦 إدارة المنتجات
+                                <i class="fas fa-boxes me-2"></i>إدارة المنتجات
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" href="../index.html">
-                                🏪 العودة للمتجر
+                                <i class="fas fa-store me-2"></i>العودة للمتجر
                             </a>
                         </li>
                     </ul>
@@ -48,10 +187,12 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <!-- العنوان الرئيسي -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h2 class="text-primary">📊 لوحة التحكم</h2>
+                    <h2 class="text-primary">
+                        <i class="fas fa-tachometer-alt me-2"></i>لوحة التحكم
+                    </h2>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
-                            🔄 تحديث
+                            <i class="fas fa-redo me-1"></i>تحديث
                         </button>
                     </div>
                 </div>
@@ -59,25 +200,31 @@
                 <!-- البطاقات الإحصائية -->
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="card text-white bg-primary mb-3">
+                        <div class="card text-white bg-primary mb-3 stat-card">
                             <div class="card-body text-center">
-                                <h5 class="card-title">📦 المنتجات</h5>
+                                <h5 class="card-title">
+                                    <i class="fas fa-box me-2"></i>المنتجات
+                                </h5>
                                 <p class="card-text display-4" id="products-count">0</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card text-white bg-success mb-3">
+                        <div class="card text-white bg-success mb-3 stat-card">
                             <div class="card-body text-center">
-                                <h5 class="card-title">🛒 المبيعات</h5>
+                                <h5 class="card-title">
+                                    <i class="fas fa-shopping-cart me-2"></i>المبيعات
+                                </h5>
                                 <p class="card-text display-4">0</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card text-white bg-warning mb-3">
+                        <div class="card text-white bg-warning mb-3 stat-card">
                             <div class="card-body text-center">
-                                <h5 class="card-title">👥 العملاء</h5>
+                                <h5 class="card-title">
+                                    <i class="fas fa-users me-2"></i>العملاء
+                                </h5>
                                 <p class="card-text display-4">0</p>
                             </div>
                         </div>
@@ -87,18 +234,25 @@
                 <!-- أزرار الإجراءات السريعة -->
                 <div class="row mt-4">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="card admin-card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-bolt me-2"></i>الإجراءات السريعة
+                                </h5>
+                            </div>
                             <div class="card-body">
-                                <h5 class="card-title text-primary">🚀 الإجراءات السريعة</h5>
                                 <div class="d-flex flex-wrap gap-2">
                                     <button class="btn btn-success" onclick="addNewProduct()">
-                                        ➕ إضافة منتج جديد
+                                        <i class="fas fa-plus me-2"></i>إضافة منتج جديد
                                     </button>
                                     <a href="products.html" class="btn btn-outline-primary">
-                                        📋 إدارة المنتجات
+                                        <i class="fas fa-list me-2"></i>إدارة المنتجات
                                     </a>
                                     <button class="btn btn-warning" onclick="addSampleProduct()">
-                                        🧪 إضافة منتج تجريبي
+                                        <i class="fas fa-vial me-2"></i>إضافة منتج تجريبي
+                                    </button>
+                                    <button class="btn btn-info" onclick="testFirebaseConnection()">
+                                        <i class="fas fa-wifi me-2"></i>اختبار الاتصال
                                     </button>
                                 </div>
                             </div>
@@ -109,17 +263,18 @@
                 <!-- أحدث المنتجات -->
                 <div class="row mt-5">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-header bg-light">
-                                <h5 class="card-title mb-0">🆕 أحدث المنتجات</h5>
+                        <div class="card admin-card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-boxes me-2"></i>أحدث المنتجات
+                                </h5>
                             </div>
                             <div class="card-body">
                                 <div id="admin-products-container" class="row">
                                     <!-- المنتجات تظهر هنا -->
                                     <div class="col-12 text-center">
-                                        <div class="text-muted py-4">
-                                            <p>🔄 جاري تحميل المنتجات...</p>
-                                        </div>
+                                        <div class="loading-spinner"></div>
+                                        <p class="mt-3">جاري تحميل المنتجات...</p>
                                     </div>
                                 </div>
                             </div>
@@ -127,26 +282,54 @@
                     </div>
                 </div>
 
-                <!-- قسم التصحيح -->
+                <!-- قسم التصحيح والاتصال -->
                 <div class="row mt-5">
                     <div class="col-12">
                         <div class="card border-warning">
-                            <div class="card-header bg-warning">
-                                <h5 class="card-title">🐛 تصحيح الأخطاء</h5>
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-tools me-2"></i>تصحيح الأخطاء والاتصال
+                                </h5>
                             </div>
                             <div class="card-body">
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button class="btn btn-info btn-sm" onclick="testConnection()">
-                                        اختبار الاتصال
-                                    </button>
-                                    <button class="btn btn-success btn-sm" onclick="addTestProduct()">
-                                        إضافة منتج تجريبي
-                                    </button>
-                                    <a href="../debug.html" class="btn btn-warning btn-sm">
-                                        صفحة التصحيح الكاملة
-                                    </a>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="border-bottom pb-2">اختبار الاتصال:</h6>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <button class="btn btn-info btn-sm" onclick="testFirebaseConnection()">
+                                                <i class="fas fa-wifi me-1"></i>اختبار الاتصال
+                                            </button>
+                                            <button class="btn btn-success btn-sm" onclick="addSampleProduct()">
+                                                <i class="fas fa-vial me-1"></i>إضافة منتج تجريبي
+                                            </button>
+                                            <button class="btn btn-warning btn-sm" onclick="clearDebugResults()">
+                                                <i class="fas fa-broom me-1"></i>مسح النتائج
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="border-bottom pb-2">معلومات النظام:</h6>
+                                        <ul class="list-unstyled small">
+                                            <li class="mb-2">
+                                                <strong>Firebase:</strong> 
+                                                <span id="firebase-status" class="badge bg-secondary">🔍 جاري التحقق...</span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <strong>قاعدة البيانات:</strong> 
+                                                <span id="db-status" class="badge bg-secondary">🔍 جاري التحقق...</span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <strong>عدد المنتجات:</strong> 
+                                                <span id="products-count-badge" class="badge bg-primary">0</span>
+                                            </li>
+                                            <li class="mb-2">
+                                                <strong>حالة الاتصال:</strong> 
+                                                <span id="connection-status" class="badge bg-secondary">غير معروف</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div id="debug-result" class="mt-2"></div>
+                                <div id="debug-result" class="mt-3"></div>
                             </div>
                         </div>
                     </div>
@@ -155,25 +338,68 @@
         </div>
     </div>
 
-    <!-- سكريبت التصحيح -->
+    <!-- 🔥 مكتبات Firebase -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-db.js"></script>
+    <script src="../js/admin-products.js"></script>
+
     <script>
-        // دوال التصحيح
-        function testConnection() {
+        // دوال التصحيح والاتصال
+        function testFirebaseConnection() {
             const result = document.getElementById('debug-result');
-            result.innerHTML = '<div class="alert alert-info">🔄 جاري اختبار الاتصال...</div>';
+            result.innerHTML = '<div class="alert alert-info">🔄 جاري اختبار الاتصال مع قاعدة البيانات...</div>';
             
-            setTimeout(() => {
+            // تحديث حالة النظام أولاً
+            checkSystemStatus();
+            
+            setTimeout(async () => {
                 if (typeof firebase === 'undefined') {
-                    result.innerHTML = '<div class="alert alert-danger">❌ مكتبة Firebase غير محملة</div>';
+                    result.innerHTML = '<div class="alert alert-danger">❌ مكتبة Firebase غير محملة. تحقق من اتصال الإنترنت.</div>';
+                    updateConnectionStatus('danger', 'غير متصل');
                     return;
                 }
                 
-                if (typeof db === 'undefined') {
-                    result.innerHTML = '<div class="alert alert-danger">❌ قاعدة البيانات غير محملة</div>';
+                if (typeof db === 'undefined' || !window.db) {
+                    result.innerHTML = '<div class="alert alert-danger">❌ قاعدة البيانات غير مهيأة. تحقق من التكوين.</div>';
+                    updateConnectionStatus('danger', 'خطأ في التهيئة');
                     return;
                 }
                 
-                result.innerHTML = '<div class="alert alert-success">✅ الاتصال مع Firebase يعمل بشكل صحيح</div>';
+                try {
+                    // اختبار بسيط للاتصال بمحاولة جلب عدد المنتجات
+                    const snapshot = await db.collection('products').limit(1).get();
+                    const productsCount = await getProductsCount();
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>✅ الاتصال يعمل بشكل صحيح</h6>
+                            <ul class="mb-0">
+                                <li>تم الاتصال بنجاح مع قاعدة البيانات</li>
+                                <li>عدد المنتجات في النظام: ${productsCount}</li>
+                                <li>الوقت: ${new Date().toLocaleTimeString('ar-EG')}</li>
+                            </ul>
+                        </div>
+                    `;
+                    updateConnectionStatus('success', 'متصل');
+                    
+                } catch (error) {
+                    let errorMessage = `❌ فشل الاتصال: ${error.message}`;
+                    if (error.code) {
+                        errorMessage += ` (كود الخطأ: ${error.code})`;
+                    }
+                    
+                    if (error.code === 'permission-denied') {
+                        errorMessage += '<br><strong>الحل:</strong> تحقق من قواعد الأمان في Firebase Console';
+                    } else if (error.code === 'unavailable') {
+                        errorMessage += '<br><strong>الحل:</strong> تحقق من اتصال الإنترنت';
+                    }
+                    
+                    result.innerHTML = `<div class="alert alert-danger">${errorMessage}</div>`;
+                    updateConnectionStatus('danger', 'فشل الاتصال');
+                }
             }, 1000);
         }
 
@@ -185,10 +411,12 @@
                 const testProduct = {
                     name: "منتج تجريبي للاختبار",
                     price: 99.99,
-                    description: "هذا منتج للاختبار فقط",
+                    description: "هذا منتج للاختبار فقط تم إنشاؤه تلقائياً",
                     category: "اختبار",
                     image: "https://via.placeholder.com/300x200/28a745/ffffff?text=منتج+تجريبي",
-                    dateAdded: new Date().toLocaleDateString('ar-EG')
+                    purchaseLink: "https://example.com/buy-now",
+                    dateAdded: new Date().toISOString(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
                 await addProductToFirebase(testProduct);
@@ -198,6 +426,7 @@
                 setTimeout(() => {
                     displayProductsInAdmin();
                     updateProductsCount();
+                    checkSystemStatus();
                 }, 1000);
                 
             } catch (error) {
@@ -210,23 +439,202 @@
             try {
                 const products = await getProductsFromFirebase();
                 const countElement = document.getElementById('products-count');
+                const countBadge = document.getElementById('products-count-badge');
+                
                 if (countElement) {
                     countElement.textContent = products.length;
                 }
+                if (countBadge) {
+                    countBadge.textContent = products.length;
+                }
+                
+                return products.length;
             } catch (error) {
                 console.error('خطأ في تحديث العدد:', error);
+                return 0;
+            }
+        }
+
+        // الحصول على عدد المنتجات
+        async function getProductsCount() {
+            try {
+                const products = await getProductsFromFirebase();
+                return products.length;
+            } catch (error) {
+                return 0;
+            }
+        }
+
+        // التحقق من حالة النظام
+        function checkSystemStatus() {
+            const firebaseStatus = document.getElementById('firebase-status');
+            const dbStatus = document.getElementById('db-status');
+            
+            if (typeof firebase === 'undefined') {
+                firebaseStatus.innerHTML = '❌ غير محمل';
+                firebaseStatus.className = 'badge bg-danger';
+            } else {
+                firebaseStatus.innerHTML = '✅ محمل';
+                firebaseStatus.className = 'badge bg-success';
+            }
+            
+            if (!window.db) {
+                dbStatus.innerHTML = '❌ غير مهيأة';
+                dbStatus.className = 'badge bg-danger';
+            } else {
+                dbStatus.innerHTML = '✅ جاهزة';
+                dbStatus.className = 'badge bg-success';
+            }
+        }
+
+        // تحديث حالة الاتصال
+        function updateConnectionStatus(status, text) {
+            const connectionStatus = document.getElementById('connection-status');
+            const statusClasses = {
+                'success': 'badge bg-success',
+                'danger': 'badge bg-danger',
+                'warning': 'badge bg-warning',
+                'secondary': 'badge bg-secondary'
+            };
+            
+            connectionStatus.textContent = text;
+            connectionStatus.className = statusClasses[status] || statusClasses.secondary;
+        }
+
+        // مسح نتائج التصحيح
+        function clearDebugResults() {
+            document.getElementById('debug-result').innerHTML = '';
+        }
+
+        // دالة إضافة المنتج المحسنة
+        async function addNewProduct() {
+            console.log('🔄 محاولة إضافة منتج جديد...');
+            
+            if (!window.db) {
+                console.error('❌ قاعدة البيانات غير متاحة');
+                alert('❌ قاعدة البيانات غير جاهزة. يرجى التحقق من اتصال الإنترنت.');
+                return;
+            }
+
+            try {
+                // استخدام نموذج بدلاً من النوافذ المنبثقة
+                const productName = prompt('📝 أدخل اسم المنتج:');
+                if (!productName) {
+                    console.log('❌ المستخدم ألغى العملية');
+                    return;
+                }
+
+                const productPrice = prompt('💰 أدخل سعر المنتج:');
+                if (!productPrice || isNaN(productPrice) || parseFloat(productPrice) <= 0) {
+                    alert('❌ يرجى إدخال سعر صحيح أكبر من الصفر');
+                    return;
+                }
+
+                const productDescription = prompt('📄 أدخل وصف المنتج:') || 'لا يوجد وصف';
+                const productCategory = prompt('📂 أدخل فئة المنتج:') || 'عام';
+                
+                // رابط الصورة
+                let productImage = prompt('🖼️ أدخل رابط صورة المنتج (اختياري):');
+                if (!productImage) {
+                    productImage = `https://via.placeholder.com/300x200/007bff/ffffff?text=${encodeURIComponent(productName)}`;
+                }
+                
+                // رابط الشراء
+                const purchaseLink = prompt('🔗 أدخل رابط الشراء (اختياري):') || '';
+
+                const newProduct = {
+                    name: productName,
+                    price: parseFloat(productPrice),
+                    description: productDescription,
+                    category: productCategory,
+                    image: productImage,
+                    purchaseLink: purchaseLink,
+                    dateAdded: new Date().toISOString(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                console.log('📦 بيانات المنتج:', newProduct);
+
+                // إضافة المنتج مع معالجة الأخطاء
+                const docRef = await window.db.collection('products').add(newProduct);
+                console.log('✅ تمت الإضافة بنجاح، المعرف:', docRef.id);
+                
+                alert(`✅ تم إضافة "${productName}" بنجاح!`);
+                
+                // تحديث العرض
+                setTimeout(() => {
+                    displayProductsInAdmin();
+                    updateProductsCount();
+                    checkSystemStatus();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ فشل في الإضافة:', error);
+                
+                // عرض رسالة خطأ مفصلة
+                let errorMessage = '❌ فشل في إضافة المنتج';
+                
+                if (error.code === 'permission-denied') {
+                    errorMessage += '\n⛔ ليس لديك صلاحية للإضافة. تحقق من قواعد الأمان في Firebase.';
+                } else if (error.code === 'unavailable') {
+                    errorMessage += '\n🌐 مشكلة في الاتصال بالإنترنت.';
+                } else {
+                    errorMessage += `\n🔧 الخطأ: ${error.message}`;
+                }
+                
+                alert(errorMessage);
+            }
+        }
+
+        // دالة الإضافة التجريبية
+        async function addSampleProduct() {
+            if (!window.db) {
+                alert('❌ قاعدة البيانات غير جاهزة');
+                return;
+            }
+
+            const sampleProduct = {
+                name: "منتج تجريبي",
+                price: 149.99,
+                description: "هذا منتج تجريبي للمتجر الإلكتروني",
+                category: "إلكترونيات",
+                image: "https://via.placeholder.com/300x200/28a745/ffffff?text=منتج+تجريبي",
+                purchaseLink: "https://example.com/buy",
+                dateAdded: new Date().toISOString(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                const docRef = await window.db.collection('products').add(sampleProduct);
+                console.log('✅ تم إضافة المنتج التجريبي بنجاح:', docRef.id);
+                
+                alert('✅ تم إضافة المنتج التجريبي بنجاح!');
+                
+                // تحديث العرض
+                setTimeout(() => {
+                    displayProductsInAdmin();
+                    updateProductsCount();
+                    checkSystemStatus();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ فشل في إضافة المنتج التجريبي:', error);
+                alert(`❌ فشل في الإضافة: ${error.message}`);
             }
         }
 
         // التهيئة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 لوحة التحكم جاهزة للتشغيل');
+            
+            // التحقق من الحالة
+            checkSystemStatus();
             updateProductsCount();
             
-            // تحميل المنتجات بعد ثانيتين
+            // تحميل المنتجات بعد تأخير بسيط
             setTimeout(() => {
                 displayProductsInAdmin();
-            }, 2000);
+            }, 1000);
         });
     </script>
 </body>

@@ -1,4 +1,4 @@
-// js/firebase-admin.js - كل شيء في ملف واحد
+// js/firebase-admin.js - الإصدار المصحح
 console.log('🚀 تحميل إدارة Firebase للمتجر...');
 
 // ==================== تكوين Firebase ====================
@@ -14,83 +14,118 @@ const firebaseConfig = {
 
 // التحقق و التهيئة
 let db = null;
-if (typeof firebase !== 'undefined') {
+let isFirebaseReady = false;
+
+function initializeFirebase() {
     try {
+        if (typeof firebase === 'undefined') {
+            console.error('❌ مكتبة Firebase غير محملة');
+            return false;
+        }
+
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
+            console.log('✅ تم تهيئة Firebase');
+        } else {
+            console.log('✅ Firebase مثبت مسبقاً');
         }
+
         db = firebase.firestore();
-        console.log('✅ تم تهيئة Firebase بنجاح');
+        isFirebaseReady = true;
+        console.log('🗄️ قاعدة البيانات جاهزة');
+        return true;
+        
     } catch (error) {
-        console.error('❌ خطأ في التهيئة:', error);
+        console.error('❌ خطأ في تهيئة Firebase:', error);
+        return false;
     }
-} else {
-    console.error('❌ مكتبة Firebase غير محملة');
 }
+
+// محاولة التهيئة فوراً
+initializeFirebase();
 
 // ==================== دوال قاعدة البيانات ====================
 
-// دالة الإضافة إلى Firebase
 async function addProductToFirebase(product) {
-    if (!db) {
-        throw new Error('❌ قاعدة البيانات غير متاحة');
+    if (!isFirebaseReady || !db) {
+        console.error('❌ قاعدة البيانات غير جاهزة');
+        throw new Error('قاعدة البيانات غير متاحة. يرجى تحديث الصفحة والمحاولة مرة أخرى.');
     }
     
     try {
-        console.log('🔄 محاولة إضافة منتج:', product.name);
-        const docRef = await db.collection('products').add({
-            ...product,
+        console.log('🔄 محاولة إضافة منتج:', product);
+        
+        const productData = {
+            name: product.name || 'بدون اسم',
+            price: product.price || 0,
+            description: product.description || 'لا يوجد وصف',
+            category: product.category || 'عام',
+            image: product.image || 'https://via.placeholder.com/300x200/cccccc/666666?text=لا+توجد+صورة',
+            dateAdded: product.dateAdded || new Date().toLocaleDateString('ar-EG'),
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
+
+        const docRef = await db.collection('products').add(productData);
         console.log('✅ تمت الإضافة بنجاح:', docRef.id);
         return docRef.id;
+        
     } catch (error) {
         console.error('❌ فشل الإضافة:', error);
-        throw error;
+        
+        // رسالة خطأ مبسطة للمستخدم
+        let userMessage = 'فشل في إضافة المنتج';
+        if (error.code === 'permission-denied') {
+            userMessage = 'ليس لديك صلاحية لإضافة منتجات. تحقق من إعدادات Firebase.';
+        } else if (error.code === 'unavailable') {
+            userMessage = 'الاتصال بالإنترنت غير متوفر';
+        }
+        
+        throw new Error(userMessage);
     }
 }
 
-// دالة جلب المنتجات من Firebase
 async function getProductsFromFirebase() {
-    if (!db) {
-        console.error('❌ قاعدة البيانات غير متاحة');
+    if (!isFirebaseReady || !db) {
+        console.error('❌ قاعدة البيانات غير جاهزة');
         return [];
     }
     
     try {
-        console.log('🔄 جلب المنتجات من Firebase...');
+        console.log('🔄 جلب المنتجات...');
         const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
         const products = [];
+        
         snapshot.forEach(doc => {
             const data = doc.data();
             products.push({ 
                 id: doc.id, 
-                name: data.name || 'بدون اسم',
-                price: data.price || 0,
-                description: data.description || 'لا يوجد وصف',
-                category: data.category || 'عام',
-                image: data.image || 'https://via.placeholder.com/400x300/cccccc/666666?text=لا+توجد+صورة',
-                dateAdded: data.dateAdded || new Date().toLocaleDateString('ar-EG')
+                name: data.name,
+                price: data.price,
+                description: data.description,
+                category: data.category,
+                image: data.image,
+                dateAdded: data.dateAdded
             });
         });
+        
         console.log('✅ تم جلب المنتجات:', products.length);
         return products;
+        
     } catch (error) {
         console.error('❌ فشل الجلب:', error);
         return [];
     }
 }
 
-// دالة حذف المنتج من Firebase
 async function deleteProductFromFirebase(productId) {
-    if (!db) {
-        throw new Error('❌ قاعدة البيانات غير متاحة');
+    if (!isFirebaseReady || !db) {
+        throw new Error('قاعدة البيانات غير متاحة');
     }
     
     try {
-        console.log('🔄 محاولة حذف المنتج:', productId);
+        console.log('🔄 حذف المنتج:', productId);
         await db.collection('products').doc(productId).delete();
-        console.log('✅ تم حذف المنتج بنجاح');
+        console.log('✅ تم الحذف بنجاح');
         return true;
     } catch (error) {
         console.error('❌ فشل الحذف:', error);
@@ -98,29 +133,16 @@ async function deleteProductFromFirebase(productId) {
     }
 }
 
-// دالة تحويل الصورة إلى Base64
 function uploadImage(file) {
     return new Promise((resolve, reject) => {
         if (!file) {
-            reject(new Error('لم يتم اختيار ملف'));
-            return;
-        }
-        
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
-            reject(new Error('نوع الملف غير مدعوم. الرجاء اختيار صورة (JPG, PNG, GIF, WebP)'));
-            return;
-        }
-        
-        const maxSize = 5 * 1024 * 1024;
-        if (file.size > maxSize) {
-            reject(new Error('حجم الملف كبير جداً. الحد الأقصى 5MB'));
+            resolve(null);
             return;
         }
         
         const reader = new FileReader();
         reader.onload = function(e) {
-            console.log('✅ تم تحميل الصورة بنجاح');
+            console.log('✅ تم تحميل الصورة');
             resolve(e.target.result);
         };
         reader.onerror = function() {
@@ -132,7 +154,6 @@ function uploadImage(file) {
 
 // ==================== دوال واجهة المستخدم ====================
 
-// دالة إنشاء نافذة إضافة منتج جديدة
 function addNewProduct() {
     closeModal();
     
@@ -146,22 +167,22 @@ function addNewProduct() {
                 
                 <div class="mb-3">
                     <label class="form-label">📝 اسم المنتج</label>
-                    <input type="text" id="productName" class="form-control" placeholder="أدخل اسم المنتج">
+                    <input type="text" id="productName" class="form-control" placeholder="أدخل اسم المنتج" required>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label">💰 السعر ($)</label>
-                    <input type="number" id="productPrice" class="form-control" placeholder="أدخل السعر" step="0.01" min="0">
+                    <input type="number" id="productPrice" class="form-control" placeholder="أدخل السعر" step="0.01" min="0" required>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label">📄 الوصف</label>
-                    <textarea id="productDescription" class="form-control" rows="3" placeholder="أدخل وصف المنتج"></textarea>
+                    <textarea id="productDescription" class="form-control" rows="3" placeholder="أدخل وصف المنتج" required></textarea>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label">📂 الفئة</label>
-                    <select id="productCategory" class="form-select">
+                    <select id="productCategory" class="form-select" required>
                         <option value="إلكترونيات">إلكترونيات</option>
                         <option value="ملابس">ملابس</option>
                         <option value="أجهزة">أجهزة</option>
@@ -180,7 +201,7 @@ function addNewProduct() {
                 </div>
                 
                 <div class="d-flex gap-2 mt-4">
-                    <button type="button" class="btn btn-success flex-fill" onclick="saveNewProduct()">
+                    <button type="button" class="btn btn-success flex-fill" onclick="saveNewProduct()" id="saveBtn">
                         💾 حفظ المنتج
                     </button>
                     <button type="button" class="btn btn-secondary flex-fill" onclick="closeModal()">
@@ -195,6 +216,7 @@ function addNewProduct() {
     
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
+    // معاينة الصورة
     document.getElementById('productImage').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -208,7 +230,6 @@ function addNewProduct() {
     });
 }
 
-// دالة حفظ المنتج الجديد
 async function saveNewProduct() {
     const name = document.getElementById('productName').value.trim();
     const price = document.getElementById('productPrice').value;
@@ -216,9 +237,11 @@ async function saveNewProduct() {
     const category = document.getElementById('productCategory').value;
     const imageFile = document.getElementById('productImage').files[0];
     const messageDiv = document.getElementById('formMessage');
+    const saveBtn = document.getElementById('saveBtn');
     
     messageDiv.style.display = 'none';
     
+    // التحقق من الحقول
     if (!name) {
         showMessage('❌ يرجى إدخال اسم المنتج', 'danger');
         return;
@@ -229,29 +252,34 @@ async function saveNewProduct() {
         return;
     }
     
-    let imageUrl = `https://via.placeholder.com/300x200/007bff/ffffff?text=${encodeURIComponent(name)}`;
-    
-    if (imageFile) {
-        try {
-            showMessage('🔄 جاري رفع الصورة...', 'info');
-            imageUrl = await uploadImage(imageFile);
-        } catch (error) {
-            showMessage(`❌ ${error.message}`, 'danger');
-            return;
-        }
+    if (!description) {
+        showMessage('❌ يرجى إدخال وصف للمنتج', 'danger');
+        return;
     }
     
-    const newProduct = {
-        name: name,
-        price: parseFloat(price),
-        description: description,
-        category: category,
-        image: imageUrl,
-        dateAdded: new Date().toLocaleDateString('ar-EG')
-    };
+    // تعطيل زر الحفظ أثناء المعالجة
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '🔄 جاري الحفظ...';
+    
+    let imageUrl = `https://via.placeholder.com/300x200/007bff/ffffff?text=${encodeURIComponent(name)}`;
     
     try {
-        showMessage('🔄 جاري إضافة المنتج...', 'info');
+        // رفع الصورة إذا existed
+        if (imageFile) {
+            imageUrl = await uploadImage(imageFile);
+        }
+        
+        const newProduct = {
+            name: name,
+            price: parseFloat(price),
+            description: description,
+            category: category,
+            image: imageUrl,
+            dateAdded: new Date().toLocaleDateString('ar-EG')
+        };
+        
+        showMessage('🔄 جاري إضافة المنتج إلى قاعدة البيانات...', 'info');
+        
         await addProductToFirebase(newProduct);
         showMessage(`✅ تم إضافة "${name}" بنجاح!`, 'success');
         
@@ -259,14 +287,18 @@ async function saveNewProduct() {
             closeModal();
             displayProductsInAdmin();
             updateProductsCount();
-        }, 1500);
+        }, 2000);
         
     } catch (error) {
-        showMessage('❌ فشل في إضافة المنتج', 'danger');
+        showMessage(`❌ ${error.message}`, 'danger');
+        console.error('تفاصيل الخطأ:', error);
+    } finally {
+        // إعادة تمكين زر الحفظ
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '💾 حفظ المنتج';
     }
 }
 
-// دالة عرض الرسائل
 function showMessage(text, type) {
     const messageDiv = document.getElementById('formMessage');
     messageDiv.innerHTML = text;
@@ -274,7 +306,6 @@ function showMessage(text, type) {
     messageDiv.style.display = 'block';
 }
 
-// دالة إغلاق النافذة
 function closeModal() {
     const modal = document.getElementById('productModal');
     if (modal) {
@@ -282,7 +313,6 @@ function closeModal() {
     }
 }
 
-// دالة العرض
 async function displayProductsInAdmin() {
     const container = document.getElementById('admin-products-container');
     if (!container) return;
@@ -347,7 +377,6 @@ async function displayProductsInAdmin() {
     }
 }
 
-// دالة الحذف
 async function deleteProduct(productId) {
     if (!confirm('⚠️ هل أنت متأكد من حذف هذا المنتج؟')) {
         return;
@@ -359,11 +388,10 @@ async function deleteProduct(productId) {
         displayProductsInAdmin();
         updateProductsCount();
     } catch (error) {
-        alert('❌ فشل في حذف المنتج');
+        alert('❌ فشل في حذف المنتج: ' + error.message);
     }
 }
 
-// دالة الإضافة التجريبية
 async function addSampleProduct() {
     const sampleProduct = {
         name: "منتج تجريبي",
@@ -380,11 +408,10 @@ async function addSampleProduct() {
         displayProductsInAdmin();
         updateProductsCount();
     } catch (error) {
-        alert('❌ فشل في الإضافة');
+        alert('❌ فشل في الإضافة: ' + error.message);
     }
 }
 
-// دالة تحديث عدد المنتجات
 async function updateProductsCount() {
     try {
         const products = await getProductsFromFirebase();
@@ -393,7 +420,7 @@ async function updateProductsCount() {
             countElement.textContent = products.length;
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('خطأ في تحديث العدد:', error);
     }
 }
 
@@ -412,7 +439,14 @@ window.updateProductsCount = updateProductsCount;
 
 // التهيئة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 لوحة التحكم جاهزة للتشغيل');
-    updateProductsCount();
-    displayProductsInAdmin();
+    console.log('🚀 لوحة التحكم جاهزة');
+    
+    // إعادة تهيئة Firebase للتأكد
+    setTimeout(() => {
+        if (!isFirebaseReady) {
+            initializeFirebase();
+        }
+        updateProductsCount();
+        displayProductsInAdmin();
+    }, 1000);
 });

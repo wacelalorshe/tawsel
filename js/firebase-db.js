@@ -1,4 +1,4 @@
-// js/firebase-db.js - الكود الكامل المحدث
+// js/firebase-db.js - الكود الكامل المصحح
 console.log('📦 تحميل Firebase Database...');
 
 // تكوين Firebase
@@ -64,15 +64,22 @@ window.getProductsFromFirebase = async function() {
         const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
         const products = [];
         snapshot.forEach(doc => {
+            const data = doc.data();
             products.push({ 
                 id: doc.id, 
-                ...doc.data() 
+                name: data.name || 'بدون اسم',
+                price: data.price || 0,
+                description: data.description || 'لا يوجد وصف',
+                category: data.category || 'عام',
+                image: data.image || 'https://via.placeholder.com/400x300/cccccc/666666?text=لا+توجد+صورة',
+                dateAdded: data.dateAdded || new Date().toLocaleDateString('ar-EG')
             });
         });
         console.log('✅ تم جلب المنتجات:', products.length);
         return products;
     } catch (error) {
         console.error('❌ فشل الجلب:', error);
+        alert('❌ خطأ في تحميل المنتجات: ' + error.message);
         return [];
     }
 }
@@ -95,24 +102,6 @@ window.deleteProductFromFirebase = async function(productId) {
     }
 }
 
-// دالة تحديث المنتج في Firebase
-window.updateProductInFirebase = async function(productId, updatedData) {
-    if (!db) {
-        console.error('❌ قاعدة البيانات غير متاحة');
-        throw new Error('قاعدة البيانات غير متاحة');
-    }
-    
-    try {
-        console.log('🔄 محاولة تحديث المنتج:', productId);
-        await db.collection('products').doc(productId).update(updatedData);
-        console.log('✅ تم تحديث المنتج بنجاح');
-        return true;
-    } catch (error) {
-        console.error('❌ فشل التحديث:', error);
-        throw error;
-    }
-}
-
 // دالة الاستماع للتحديثات الفورية
 window.setupProductsListener = function(callback) {
     if (!db) {
@@ -124,9 +113,15 @@ window.setupProductsListener = function(callback) {
     return db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
         const products = [];
         snapshot.forEach(doc => {
+            const data = doc.data();
             products.push({ 
                 id: doc.id, 
-                ...doc.data() 
+                name: data.name || 'بدون اسم',
+                price: data.price || 0,
+                description: data.description || 'لا يوجد وصف',
+                category: data.category || 'عام',
+                image: data.image || 'https://via.placeholder.com/400x300/cccccc/666666?text=لا+توجد+صورة',
+                dateAdded: data.dateAdded || new Date().toLocaleDateString('ar-EG')
             });
         });
         console.log('🔄 تحديث المنتجات:', products.length);
@@ -178,14 +173,35 @@ window.getStoreStats = async function() {
         const productsSnapshot = await db.collection('products').get();
         const totalProducts = productsSnapshot.size;
         
-        // يمكن إضافة المزيد من الإحصائيات هنا لاحقاً
         return {
             totalProducts: totalProducts,
-            totalSales: 0, // يمكن إضافته لاحقاً
-            totalCustomers: 0 // يمكن إضافته لاحقاً
+            totalSales: 0,
+            totalCustomers: 0
         };
     } catch (error) {
         console.error('❌ خطأ في جلب الإحصائيات:', error);
         return null;
+    }
+}
+
+// دالة اختبار الاتصال
+window.testFirebaseConnection = async function() {
+    if (!db) {
+        return { success: false, message: 'Firebase غير محمل' };
+    }
+    
+    try {
+        // محاولة قراءة بسيطة
+        const testSnapshot = await db.collection('products').limit(1).get();
+        return { 
+            success: true, 
+            message: `الاتصال ناجح - ${testSnapshot.size} منتج`,
+            productsCount: testSnapshot.size
+        };
+    } catch (error) {
+        return { 
+            success: false, 
+            message: `فشل الاتصال: ${error.message}` 
+        };
     }
 }

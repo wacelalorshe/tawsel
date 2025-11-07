@@ -2,7 +2,7 @@
 console.log('✅ تم تحميل صفحة المنتجات');
 
 // عرض جميع المنتجات
-async function displayAllProducts() {
+async function displayAllProducts(searchTerm = '') {
     console.log('🔄 جلب المنتجات للعملاء...');
     
     const container = document.getElementById('products-container');
@@ -11,7 +11,13 @@ async function displayAllProducts() {
     if (!container) return;
 
     try {
-        const products = await getProductsFromFirebase();
+        let products;
+        if (searchTerm) {
+            products = await searchProducts(searchTerm);
+        } else {
+            products = await getProductsFromFirebase();
+        }
+        
         container.innerHTML = '';
 
         if (products.length === 0) {
@@ -27,18 +33,23 @@ async function displayAllProducts() {
             const productCard = `
                 <div class="col-lg-4 col-md-6 mb-4" data-category="${product.category}" data-name="${product.name.toLowerCase()}">
                     <div class="card h-100 product-card">
-                        <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
-                        <div class="card-body">
+                        <div class="position-relative">
+                            <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
+                            <span class="badge bg-primary position-absolute top-0 start-0 m-2">${product.category}</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-primary">${product.name}</h5>
-                            <p class="card-text text-muted">${product.description}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 text-success">$${product.price}</span>
-                                <button class="btn btn-primary" onclick="addToCart('${product.id}')">
-                                    🛒 أضف للسلة
-                                </button>
-                            </div>
-                            <div class="mt-2">
-                                <span class="badge bg-secondary">${product.category}</span>
+                            <p class="card-text text-muted flex-grow-1">${product.description}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h4 text-success price-tag">$${product.price}</span>
+                                <div>
+                                    <button class="btn btn-primary me-2" onclick="addToCart('${product.id}')">
+                                        <i class="fas fa-cart-plus me-1"></i>أضف للسلة
+                                    </button>
+                                    ${product.purchaseLink ? `<a href="${product.purchaseLink}" target="_blank" class="btn btn-success">
+                                        <i class="fas fa-shopping-cart me-1"></i>شراء
+                                    </a>` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -53,17 +64,32 @@ async function displayAllProducts() {
     }
 }
 
+// البحث في الصفحة
+function setupSearch() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchParam = urlParams.get('search');
+    
+    if (searchParam) {
+        document.getElementById('search-input').value = searchParam;
+        displayAllProducts(searchParam);
+    }
+    
+    document.getElementById('search-input').addEventListener('input', function(e) {
+        displayAllProducts(e.target.value);
+    });
+}
+
 // التهيئة
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 صفحة المنتجات جاهزة');
-    displayAllProducts();
+    setupSearch();
     setupFilters();
     
     // تحديث تلقائي عند إضافة منتجات جديدة
-    setupProductsListener(function(products) {
-        console.log('🔄 تحديث تلقائي للمنتجات');
-        displayAllProducts();
-    });
+    if (typeof setupProductsListener === 'function') {
+        setupProductsListener(function(products) {
+            console.log('🔄 تحديث تلقائي للمنتجات');
+            displayAllProducts();
+        });
+    }
 });
-
-// باقي الدوال تبقى كما هي (addToCart, setupFilters, filterProducts, etc.)

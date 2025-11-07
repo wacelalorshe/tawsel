@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجري الإلكتروني - الرئيسية</title>
+    <title>وسيل ستور - متجر إلكتروني</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #4cc9f0;
+            --primary-color: #2E86AB;
+            --secondary-color: #A23B72;
+            --accent-color: #F18F01;
             --light-color: #f8f9fa;
-            --dark-color: #212529;
+            --dark-color: #2B2D42;
             --success-color: #4bb543;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
@@ -76,6 +76,11 @@
         
         .btn-success {
             background: linear-gradient(45deg, var(--success-color), #3a9d3a);
+            border: none;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, var(--warning-color), #e0a800);
             border: none;
         }
         
@@ -191,6 +196,37 @@
             to { transform: rotate(360deg); }
         }
         
+        /* تحسينات السلة */
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
         /* تحسينات التجاوب */
         @media (max-width: 768px) {
             .hero-section {
@@ -201,6 +237,33 @@
                 font-size: 2rem;
             }
         }
+        
+        /* تحسينات تسجيل الدخول */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .login-body {
+            padding: 30px;
+            background: white;
+        }
     </style>
 </head>
 <body>
@@ -208,7 +271,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">
-                <i class="fas fa-store me-2"></i>متجري الإلكتروني
+                <i class="fas fa-store me-2"></i>وسيل ستور
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -236,8 +299,14 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin/dashboard.html">
+                        <a class="nav-link" href="admin/login.html">
                             <i class="fas fa-cog me-1"></i> لوحة التحكم
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> السلة
+                            <span id="cart-count" class="cart-badge">0</span>
                         </a>
                     </li>
                 </ul>
@@ -248,7 +317,7 @@
     <!-- قسم الهيرو -->
     <section class="hero-section text-white">
         <div class="container text-center">
-            <h1 class="display-4 fw-bold mb-4">مرحباً بكم في متجرنا الإلكتروني</h1>
+            <h1 class="display-4 fw-bold mb-4">مرحباً بكم في وسيل ستور</h1>
             <p class="lead mb-4">اكتشف أحدث المنتجات بأفضل الأسعار مع خدمة عملاء متميزة</p>
             <a href="products.html" class="btn btn-light btn-lg mt-3">
                 <i class="fas fa-shopping-bag me-2"></i> ابدأ التسوق الآن
@@ -292,7 +361,7 @@
     <!-- المميزات -->
     <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="text-center mb-5 display-5 fw-bold">لماذا تختار متجرنا؟</h2>
+            <h2 class="text-center mb-5 display-5 fw-bold">لماذا تختار وسيل ستور؟</h2>
             <div class="row text-center">
                 <div class="col-md-4 mb-4">
                     <div class="feature-box">
@@ -322,7 +391,7 @@
     <!-- الفوتر -->
     <footer class="py-4">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2024 متجري الإلكتروني. جميع الحقوق محفوظة.</p>
+            <p class="mb-0">&copy; 2024 وسيل ستور. جميع الحقوق محفوظة.</p>
             <div class="mt-2">
                 <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
@@ -337,6 +406,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-db.js"></script>
+    <script src="js/cart.js"></script>
     <script>
         // كود الصفحة الرئيسية مع Firebase
         console.log('✅ تم تحميل الصفحة الرئيسية');
@@ -357,9 +427,9 @@
                     container.innerHTML = `
                         <div class="col-12 text-center">
                             <div class="alert alert-info p-4">
-                                <h4><i class="fas fa-shopping-bag me-2"></i>مرحبا بكم في متجرنا!</h4>
+                                <h4><i class="fas fa-shopping-bag me-2"></i>مرحبا بكم في وسيل ستور!</h4>
                                 <p class="mb-3">لم يتم إضافة منتجات بعد</p>
-                                <a href="admin/dashboard.html" class="btn btn-primary mt-2">
+                                <a href="admin/login.html" class="btn btn-primary mt-2">
                                     <i class="fas fa-plus me-2"></i>إضافة منتجات
                                 </a>
                             </div>
@@ -382,7 +452,7 @@
                                     <div class="d-flex justify-content-between align-items-center mt-auto">
                                         <span class="h5 text-primary price-tag">$${product.price}</span>
                                         <div>
-                                            <button class="btn btn-success me-2" onclick="addToCart('${product.id}')">
+                                            <button class="btn btn-success me-2" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}')">
                                                 <i class="fas fa-cart-plus me-1"></i>أضف للسلة
                                             </button>
                                             ${product.purchaseLink ? `<a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary">
@@ -416,10 +486,20 @@
             }
         });
 
+        // تحديث عدد العناصر في السلة
+        function updateCartCount() {
+            const cart = getCart();
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            }
+        }
+
         // التهيئة
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 الصفحة الرئيسية جاهزة');
             displayFeaturedProducts();
+            updateCartCount();
             
             // تحديث تلقائي
             if (typeof setupProductsListener === 'function') {

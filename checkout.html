@@ -1,0 +1,844 @@
+checkout<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الشراء - وسيل ستور</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2E86AB;
+            --secondary-color: #A23B72;
+            --accent-color: #F18F01;
+            --light-color: #f8f9fa;
+            --dark-color: #2B2D42;
+            --success-color: #4bb543;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        /* تحسينات عامة */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .checkout-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #3a9d3a);
+            border: none;
+        }
+        
+        /* تحسينات المنتجات */
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .price-tag {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        /* تحسينات طرق الدفع */
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(46, 134, 171, 0.05);
+        }
+        
+        .payment-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        /* تحسينات وسائل التواصل */
+        .contact-method {
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .contact-method:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        /* تحسينات التحميل */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* تحسينات السلة */
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* تحسينات التجاوب */
+        @media (max-width: 768px) {
+            .checkout-section {
+                padding: 20px;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+        }
+        
+        /* تحسينات النماذج */
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(46, 134, 171, 0.25);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+        
+        /* تحسينات الخطوات */
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+        
+        .step.active .step-icon {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-icon {
+            background: var(--success-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-store me-2"></i>وسيل ستور
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i> الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">
+                            <i class="fas fa-box me-1"></i> المنتجات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="fas fa-info-circle me-1"></i> من نحن
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-phone me-1"></i> اتصل بنا
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> السلة
+                            <span id="cart-count" class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحة -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4 display-5 fw-bold text-primary">
+                    <i class="fas fa-shopping-bag me-2"></i>إتمام عملية الشراء
+                </h1>
+                
+                <!-- خطوات الشراء -->
+                <div class="steps-container">
+                    <div class="step completed">
+                        <div class="step-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h6>عربة التسوق</h6>
+                        <small class="text-muted">اختيار المنتجات</small>
+                    </div>
+                    <div class="step active">
+                        <div class="step-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h6>معلومات العميل</h6>
+                        <small class="text-muted">تفاصيل الاتصال</small>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h6>طرق الدفع</h6>
+                        <small class="text-muted">اختيار طريقة الدفع</small>
+                    </div>
+                    <div class="step">
+                        <div class="step-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h6>تأكيد الطلب</h6>
+                        <small class="text-muted>إتمام الشراء</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- معلومات العميل -->
+            <div class="col-lg-8">
+                <div class="checkout-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user me-2"></i>معلومات العميل
+                    </h3>
+                    
+                    <form id="customer-info-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-name" class="form-label">الاسم الكامل</label>
+                                <input type="text" class="form-control" id="customer-name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-phone" class="form-label">رقم الهاتف</label>
+                                <input type="tel" class="form-control" id="customer-phone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-email" class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control" id="customer-email">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-city" class="form-label">المدينة</label>
+                                <select class="form-select" id="customer-city" required>
+                                    <option value="">اختر المدينة</option>
+                                    <option value="الرياض">الرياض</option>
+                                    <option value="جدة">جدة</option>
+                                    <option value="مكة">مكة</option>
+                                    <option value="المدينة">المدينة</option>
+                                    <option value="الدمام">الدمام</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customer-address" class="form-label">العنوان التفصيلي</label>
+                            <textarea class="form-control" id="customer-address" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customer-notes" class="form-label">ملاحظات إضافية (اختياري)</label>
+                            <textarea class="form-control" id="customer-notes" rows="2" placeholder="ملاحظات حول العنوان أو وقت التوصيل..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="cart.html" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right me-2"></i>العودة للسلة
+                            </a>
+                            <button type="button" class="btn btn-primary" onclick="proceedToPayment()">
+                                المتابعة للدفع <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- طرق الدفع -->
+                <div class="checkout-section" id="payment-section" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-credit-card me-2"></i>طرق الدفع
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('cash')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <h5>الدفع نقداً عند الاستلام</h5>
+                                <p class="text-muted">ادفع عند استلام الطلب</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('card')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <h5>البطاقة الائتمانية</h5>
+                                <p class="text-muted">دفع آمن عبر البطاقة</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('mada')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h5>مدى</h5>
+                                <p class="text-muted">الدفع عبر بطاقة مدى</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('apple-pay')">
+                                <div class="payment-icon">
+                                    <i class="fab fa-apple-pay"></i>
+                                </div>
+                                <h5>Apple Pay</h5>
+                                <p class="text-muted">الدفع عبر Apple Pay</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- تفاصيل البطاقة (تظهر فقط عند اختيار الدفع بالبطاقة) -->
+                    <div id="card-details" style="display: none;">
+                        <h5 class="mt-4 mb-3">تفاصيل البطاقة الائتمانية</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="card-number" class="form-label">رقم البطاقة</label>
+                                <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="card-expiry" class="form-label">تاريخ الانتهاء</label>
+                                <input type="text" class="form-control" id="card-expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="card-cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="card-cvv" placeholder="123">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="card-name" class="form-label">اسم حامل البطاقة</label>
+                            <input type="text" class="form-control" id="card-name" placeholder="كما هو مدون على البطاقة">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="backToCustomerInfo()">
+                            <i class="fas fa-arrow-right me-2"></i>العودة للمعلومات
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="proceedToConfirmation()">
+                            تأكيد الطلب <i class="fas fa-check-circle ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- تأكيد الطلب -->
+                <div class="checkout-section" id="confirmation-section" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-check-circle me-2"></i>تأكيد الطلب
+                    </h3>
+                    
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle me-2"></i>تم تأكيد طلبك بنجاح!</h5>
+                        <p class="mb-0">رقم الطلب: <strong id="order-number">#12345</strong></p>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>معلومات الطلب</h5>
+                            <p><strong>الاسم:</strong> <span id="confirm-name"></span></p>
+                            <p><strong>الهاتف:</strong> <span id="confirm-phone"></span></p>
+                            <p><strong>العنوان:</strong> <span id="confirm-address"></span></p>
+                            <p><strong>طريقة الدفع:</strong> <span id="confirm-payment"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>معلومات الشحن</h5>
+                            <p>سيتم توصيل طلبك خلال <strong>2-3 أيام عمل</strong></p>
+                            <p>لأي استفسار، يمكنك التواصل معنا عبر:</p>
+                            <p><i class="fas fa-phone me-2"></i> 0501234567</p>
+                            <p><i class="fas fa-envelope me-2"></i> info@waseel-store.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="index.html" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>العودة للرئيسية
+                        </a>
+                        <a href="products.html" class="btn btn-outline-primary ms-2">
+                            <i class="fas fa-shopping-bag me-2"></i>مواصلة التسوق
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تفاصيل المنتج والتواصل -->
+            <div class="col-lg-4">
+                <!-- تفاصيل المنتج -->
+                <div class="checkout-section mb-4">
+                    <h3 class="section-title">
+                        <i class="fas fa-box me-2"></i>تفاصيل الطلب
+                    </h3>
+                    
+                    <div id="order-items">
+                        <!-- سيتم عرض المنتجات هنا -->
+                        <div class="text-center py-4">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-3">جاري تحميل تفاصيل الطلب...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>المجموع الفرعي:</span>
+                            <span>$<span id="subtotal">0.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>رسوم الشحن:</span>
+                            <span>$<span id="shipping">5.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>الضريبة (5%):</span>
+                            <span>$<span id="tax">0.00</span></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <strong>المجموع الكلي:</strong>
+                            <strong class="price-tag">$<span id="total">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- وسائل التواصل -->
+                <div class="checkout-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-headset me-2"></i>وسائل التواصل
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <h6>اتصال هاتفي</h6>
+                                <p class="text-muted small">0501234567</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="callCustomerService()">
+                                    اتصل الآن
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fab fa-whatsapp"></i>
+                                </div>
+                                <h6>واتساب</h6>
+                                <p class="text-muted small">0501234567</p>
+                                <button class="btn btn-sm btn-outline-success" onclick="openWhatsApp()">
+                                    راسلنا
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h6>البريد الإلكتروني</h6>
+                                <p class="text-muted small">info@waseel-store.com</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="sendEmail()">
+                                    أرسل بريد
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-comment-dots"></i>
+                                </div>
+                                <h6>الدردشة المباشرة</h6>
+                                <p class="text-muted small">متاحة 24/7</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="openLiveChat()">
+                                    ابدأ الدردشة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <h6><i class="fas fa-clock me-2"></i>أوقات العمل</h6>
+                        <p class="mb-1 small">السبت - الخميس: 8 صباحاً - 10 مساءً</p>
+                        <p class="mb-0 small">الجمعة: 4 مساءً - 10 مساءً</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الفوتر -->
+    <footer class="py-4 bg-dark text-white mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 وسيل ستور. جميع الحقوق محفوظة.</p>
+            <div class="mt-2">
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // كود صفحة الشراء
+        console.log('✅ تم تحميل صفحة الشراء');
+        
+        let selectedPaymentMethod = '';
+        let currentStep = 1;
+
+        // تحديث عدد العناصر في السلة
+        function updateCartCount() {
+            const cart = getCart();
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            }
+        }
+
+        // عرض تفاصيل الطلب
+        function displayOrderItems() {
+            const container = document.getElementById('order-items');
+            const subtotalElement = document.getElementById('subtotal');
+            const taxElement = document.getElementById('tax');
+            const totalElement = document.getElementById('total');
+            
+            if (!container) return;
+            
+            const cart = getCart();
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-3">
+                        <p class="text-muted">لا توجد منتجات في السلة</p>
+                        <a href="products.html" class="btn btn-sm btn-primary">استعرض المنتجات</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            let itemsHTML = '';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                itemsHTML += `
+                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                        <img src="${item.image}" alt="${item.name}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${item.name}</h6>
+                            <p class="text-muted mb-0">$${item.price} × ${item.quantity}</p>
+                        </div>
+                        <div class="text-end">
+                            <strong>$${itemTotal.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // حساب التكاليف الإضافية
+            const shipping = 5.00;
+            const tax = subtotal * 0.05;
+            const total = subtotal + shipping + tax;
+            
+            container.innerHTML = itemsHTML;
+            subtotalElement.textContent = subtotal.toFixed(2);
+            taxElement.textContent = tax.toFixed(2);
+            totalElement.textContent = total.toFixed(2);
+        }
+
+        // اختيار طريقة الدفع
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // إزالة التحديد من جميع الطرق
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // إضافة التحديد للطريقة المختارة
+            event.currentTarget.classList.add('selected');
+            
+            // إظهار تفاصيل البطاقة إذا كانت الطريقة المختارة هي البطاقة
+            const cardDetails = document.getElementById('card-details');
+            if (method === 'card') {
+                cardDetails.style.display = 'block';
+            } else {
+                cardDetails.style.display = 'none';
+            }
+        }
+
+        // الانتقال إلى قسم الدفع
+        function proceedToPayment() {
+            // التحقق من صحة النموذج
+            const form = document.getElementById('customer-info-form');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // الانتقال إلى قسم الدفع
+            document.getElementById('customer-info-form').parentElement.style.display = 'none';
+            document.getElementById('payment-section').style.display = 'block';
+            
+            // تحديث الخطوات
+            updateSteps(2);
+        }
+
+        // العودة إلى معلومات العميل
+        function backToCustomerInfo() {
+            document.getElementById('payment-section').style.display = 'none';
+            document.getElementById('customer-info-form').parentElement.style.display = 'block';
+            
+            // تحديث الخطوات
+            updateSteps(1);
+        }
+
+        // الانتقال إلى تأكيد الطلب
+        function proceedToConfirmation() {
+            if (!selectedPaymentMethod) {
+                alert('يرجى اختيار طريقة الدفع');
+                return;
+            }
+            
+            // الانتقال إلى قسم التأكيد
+            document.getElementById('payment-section').style.display = 'none';
+            document.getElementById('confirmation-section').style.display = 'block';
+            
+            // ملء معلومات التأكيد
+            document.getElementById('confirm-name').textContent = document.getElementById('customer-name').value;
+            document.getElementById('confirm-phone').textContent = document.getElementById('customer-phone').value;
+            document.getElementById('confirm-address').textContent = document.getElementById('customer-address').value;
+            
+            // تحديد اسم طريقة الدفع
+            let paymentMethodName = '';
+            switch(selectedPaymentMethod) {
+                case 'cash':
+                    paymentMethodName = 'الدفع نقداً عند الاستلام';
+                    break;
+                case 'card':
+                    paymentMethodName = 'البطاقة الائتمانية';
+                    break;
+                case 'mada':
+                    paymentMethodName = 'مدى';
+                    break;
+                case 'apple-pay':
+                    paymentMethodName = 'Apple Pay';
+                    break;
+            }
+            document.getElementById('confirm-payment').textContent = paymentMethodName;
+            
+            // إنشاء رقم طلب عشوائي
+            document.getElementById('order-number').textContent = '#' + Math.floor(10000 + Math.random() * 90000);
+            
+            // تحديث الخطوات
+            updateSteps(3);
+            
+            // تفريغ السلة بعد إتمام الطلب
+            localStorage.removeItem('waseelStoreCart');
+            updateCartCount();
+        }
+
+        // تحديث الخطوات
+        function updateSteps(step) {
+            currentStep = step;
+            const steps = document.querySelectorAll('.step');
+            
+            steps.forEach((stepEl, index) => {
+                stepEl.classList.remove('active', 'completed');
+                
+                if (index + 1 < step) {
+                    stepEl.classList.add('completed');
+                } else if (index + 1 === step) {
+                    stepEl.classList.add('active');
+                }
+            });
+        }
+
+        // دوال التواصل
+        function callCustomerService() {
+            window.open('tel:0501234567');
+        }
+
+        function openWhatsApp() {
+            window.open('https://wa.me/966501234567?text=مرحباً، أريد الاستفسار عن طلبي');
+        }
+
+        function sendEmail() {
+            window.location.href = 'mailto:info@waseel-store.com?subject=استفسار عن طلب&body=مرحباً، أريد الاستفسار عن طلبي';
+        }
+
+        function openLiveChat() {
+            alert('سيتم فتح نافذة الدردشة المباشرة قريباً. للتواصل الفوري، يرجى استخدام الواتساب أو البريد الإلكتروني.');
+        }
+
+        // التهيئة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 صفحة الشراء جاهزة');
+            updateCartCount();
+            displayOrderItems();
+            updateSteps(1);
+        });
+    </script>
+</body>
+</html>html

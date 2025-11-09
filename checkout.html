@@ -292,6 +292,15 @@
             margin-top: 20px;
             text-align: center;
         }
+        
+        .purchase-link-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -346,11 +355,27 @@
                 </h1>
                 
                 <!-- خطوات الشراء -->
+                <div class="steps-container">
+                    <div class="step active" id="step1">
+                        <div class="step-icon">1</div>
+                        <div>معلومات العميل</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-icon">2</div>
+                        <div>طرق الدفع</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-icon">3</div>
+                        <div>تأكيد الطلب</div>
+                    </div>
+                </div>
+            </div>
+        </div>
                 
         <div class="row">
             <!-- معلومات العميل -->
             <div class="col-lg-8">
-                <div class="checkout-section">
+                <div class="checkout-section" id="customer-section">
                     <h3 class="section-title">
                         <i class="fas fa-user me-2"></i>معلومات العميل
                     </h3>
@@ -402,8 +427,8 @@
                         </div>
                         
                         <div class="d-flex justify-content-between mt-4">
-                            <a href="cart.html" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-right me-2"></i>العودة للسلة
+                            <a href="index.html" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right me-2"></i>العودة للمتجر
                             </a>
                             <button type="button" class="btn btn-primary" onclick="proceedToPayment()">
                                 المتابعة للدفع <i class="fas fa-arrow-left ms-2"></i>
@@ -674,11 +699,15 @@
 
         // دالة محاكاة للحصول على السلة من localStorage
         function getCart() {
-            // هذه دالة محاكاة - في التطبيق الحقيقي ستأخذ البيانات من localStorage أو API
-            return [
-                { id: 1, name: 'هاتف ذكي', price: 299.99, quantity: 1, image: 'https://via.placeholder.com/150' },
-                { id: 2, name: 'سماعات أذن', price: 49.99, quantity: 2, image: 'https://via.placeholder.com/150' }
-            ];
+            // محاولة الحصول على منتج الشراء المباشر
+            const buyNowProduct = localStorage.getItem('buyNowProduct');
+            if (buyNowProduct) {
+                return [JSON.parse(buyNowProduct)];
+            }
+
+            // إذا لم يكن هناك منتج شراء مباشر، نعود للسلة العادية
+            const cart = localStorage.getItem('waseelStoreCart');
+            return cart ? JSON.parse(cart) : [];
         }
 
         // تحديث عدد العناصر في السلة
@@ -724,6 +753,7 @@
                         <div class="flex-grow-1">
                             <h6 class="mb-1">${item.name}</h6>
                             <p class="text-muted mb-0">$${item.price} × ${item.quantity}</p>
+                            ${item.purchaseLink ? `<small class="text-info"><i class="fas fa-link me-1"></i>رابط الشراء المباشر</small>` : ''}
                         </div>
                         <div class="text-end">
                             <strong>$${itemTotal.toFixed(2)}</strong>
@@ -774,7 +804,7 @@
             }
             
             // الانتقال إلى قسم الدفع
-            document.getElementById('customer-info-form').parentElement.style.display = 'none';
+            document.getElementById('customer-section').style.display = 'none';
             document.getElementById('payment-section').style.display = 'block';
             
             // تحديث الخطوات
@@ -784,7 +814,7 @@
         // العودة إلى معلومات العميل
         function backToCustomerInfo() {
             document.getElementById('payment-section').style.display = 'none';
-            document.getElementById('customer-info-form').parentElement.style.display = 'block';
+            document.getElementById('customer-section').style.display = 'block';
             
             // تحديث الخطوات
             updateSteps(1);
@@ -827,7 +857,14 @@
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 totalAmount += itemTotal;
-                orderDetails += `- ${item.name} (${item.quantity} × $${item.price}) = $${itemTotal.toFixed(2)}\n`;
+                orderDetails += `- ${item.name} (${item.quantity} × $${item.price}) = $${itemTotal.toFixed(2)}`;
+                
+                // إضافة رابط الشراء المباشر إذا كان موجوداً
+                if (item.purchaseLink) {
+                    orderDetails += ` (رابط مباشر: ${item.purchaseLink})`;
+                }
+                
+                orderDetails += `\n`;
             });
             
             // إضافة التكاليف الإضافية
@@ -913,6 +950,7 @@
             
             // تفريغ السلة بعد إتمام الطلب
             localStorage.removeItem('waseelStoreCart');
+            localStorage.removeItem('buyNowProduct');
             updateCartCount();
             
             // إرسال رسالة الواتساب

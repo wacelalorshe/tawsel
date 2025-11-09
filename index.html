@@ -723,11 +723,8 @@
     <script src="js/firebase-db.js"></script>
     <script src="js/cart.js"></script>
     <script>
-        // كود الصفحة الرئيسية مع Firebase - يبقى كما هو تماماً
+        // كود الصفحة الرئيسية مع Firebase
         console.log('✅ تم تحميل الصفحة الرئيسية');
-
-        // متغير لتخزين المنتج الحالي في النافذة المنبثقة
-        let currentModalProduct = null;
 
         // عرض المنتجات المميزة
         async function displayFeaturedProducts() {
@@ -759,7 +756,7 @@
                 featuredProducts.forEach(product => {
                     const productCard = `
                         <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100 product-card" onclick="openProductModal('${product.id}')">
+                            <div class="card h-100 product-card">
                                 <div class="position-relative">
                                     <img src="${product.image}" class="card-img-top product-image" alt="${product.name}">
                                     <span class="badge bg-primary product-badge">${product.category}</span>
@@ -770,10 +767,10 @@
                                     <div class="d-flex justify-content-between align-items-center mt-auto">
                                         <span class="h5 text-primary price-tag">$${product.price}</span>
                                         <div>
-                                            <button class="btn btn-success me-2" onclick="event.stopPropagation(); addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}')">
+                                            <button class="btn btn-success me-2" onclick="addToCart('${product.id}', '${product.name}', ${product.price}, '${product.image}')">
                                                 <i class="fas fa-cart-plus me-1"></i>أضف للسلة
                                             </button>
-                                            ${product.purchaseLink ? `<a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary" onclick="event.stopPropagation()">
+                                            ${product.purchaseLink ? `<a href="${product.purchaseLink}" target="_blank" class="btn btn-outline-primary">
                                                 <i class="fas fa-shopping-cart me-1"></i>شراء
                                             </a>` : ''}
                                         </div>
@@ -796,58 +793,6 @@
             }
         }
 
-        // فتح نافذة المنتج المنبثقة
-        async function openProductModal(productId) {
-            try {
-                const products = await getProductsFromFirebase();
-                const product = products.find(p => p.id === productId);
-                
-                if (!product) {
-                    console.error('❌ المنتج غير موجود');
-                    return;
-                }
-                
-                currentModalProduct = product;
-                
-                // تحديث محتوى النافذة المنبثقة
-                document.getElementById('modal-product-name').textContent = product.name;
-                document.getElementById('modal-product-image').src = product.image;
-                document.getElementById('modal-product-description').textContent = product.description;
-                document.getElementById('modal-product-price').textContent = `$${product.price}`;
-                document.getElementById('modal-product-category').textContent = product.category;
-                
-                // إضافة معالجات الأحداث للأزرار
-                document.getElementById('modal-add-to-cart-btn').onclick = function() {
-                    addToCart(product.id, product.name, product.price, product.image);
-                    closeProductModal();
-                };
-                
-                document.getElementById('modal-buy-now-btn').onclick = function() {
-                    addToCart(product.id, product.name, product.price, product.image);
-                    window.location.href = 'cart.html';
-                };
-                
-                // عرض النافذة المنبثقة
-                document.getElementById('product-modal').style.display = 'block';
-            } catch (error) {
-                console.error('❌ خطأ في فتح نافذة المنتج:', error);
-            }
-        }
-
-        // إغلاق نافذة المنتج المنبثقة
-        function closeProductModal() {
-            document.getElementById('product-modal').style.display = 'none';
-            currentModalProduct = null;
-        }
-
-        // إغلاق النافذة المنبثقة عند النقر خارجها
-        window.onclick = function(event) {
-            const modal = document.getElementById('product-modal');
-            if (event.target === modal) {
-                closeProductModal();
-            }
-        }
-
         // البحث العالمي
         document.getElementById('global-search').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
@@ -865,73 +810,16 @@
             }
         }
 
-        // تحديث محتويات السلة في القائمة العلوية
-        function updateCartDropdown() {
-            const cart = getCart();
-            const cartDropdownItems = document.getElementById('cart-dropdown-items');
-            
-            if (cart.length === 0) {
-                cartDropdownItems.innerHTML = `
-                    <div class="text-center p-3">
-                        <p class="text-muted">السلة فارغة</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let cartItemsHTML = '';
-            let total = 0;
-            
-            cart.forEach(item => {
-                total += item.price * item.quantity;
-                cartItemsHTML += `
-                    <div class="cart-dropdown-item">
-                        <img src="${item.image}" alt="${item.name}">
-                        <div class="cart-dropdown-item-details">
-                            <div class="cart-dropdown-item-title">${item.name}</div>
-                            <div class="d-flex justify-content-between">
-                                <span class="cart-dropdown-item-price">$${item.price} × ${item.quantity}</span>
-                                <span class="text-muted">$${(item.price * item.quantity).toFixed(2)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            cartItemsHTML += `
-                <div class="cart-dropdown-footer">
-                    <div class="d-flex justify-content-between mb-3">
-                        <strong>المجموع:</strong>
-                        <strong>$${total.toFixed(2)}</strong>
-                    </div>
-                    <a href="cart.html" class="btn btn-primary btn-sm w-100">
-                        <i class="fas fa-shopping-cart me-1"></i> عرض السلة
-                    </a>
-                </div>
-            `;
-            
-            cartDropdownItems.innerHTML = cartItemsHTML;
-        }
-
         // التهيئة
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 الصفحة الرئيسية جاهزة');
             displayFeaturedProducts();
             updateCartCount();
-            updateCartDropdown();
             
             // تحديث تلقائي
             if (typeof setupProductsListener === 'function') {
                 setupProductsListener(function(products) {
                     displayFeaturedProducts();
-                });
-            }
-            
-            // تحديث السلة عند تغييرها
-            if (typeof setupCartListener === 'function') {
-                setupCartListener(function() {
-                    updateCartCount();
-                    updateCartDropdown();
                 });
             }
         });

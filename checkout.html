@@ -7,11 +7,591 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ... (كل الـ CSS السابق يبقى كما هو) ... */
+        :root {
+            --primary-color: #2E86AB;
+            --secondary-color: #A23B72;
+            --accent-color: #F18F01;
+            --light-color: #f8f9fa;
+            --dark-color: #2B2D42;
+            --success-color: #4bb543;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .checkout-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+        
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(46, 134, 171, 0.05);
+        }
+        
+        .payment-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .contact-method {
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .price-tag {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 40px 0;
+        }
+        
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+        
+        .step.active .step-icon {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed .step-icon {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .whatsapp-success {
+            background-color: #25D366;
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-section {
+                padding: 20px;
+            }
+            
+            .steps-container {
+                flex-direction: column;
+            }
+            
+            .step {
+                margin-bottom: 20px;
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- ... (الهيكل HTML يبقى كما هو) ... -->
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-store me-2"></i>وسيل ستور
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i> الرئيسية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="products.html">
+                            <i class="fas fa-box me-1"></i> المنتجات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">
+                            <i class="fas fa-info-circle me-1"></i> من نحن
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">
+                            <i class="fas fa-phone me-1"></i> اتصل بنا
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="cart.html">
+                            <i class="fas fa-shopping-cart me-1"></i> السلة
+                            <span id="cart-count" class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوى الصفحة -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4 display-5 fw-bold text-primary">
+                    <i class="fas fa-shopping-bag me-2"></i>إتمام عملية الشراء
+                </h1>
+                
+                <!-- خطوات الشراء -->
+                <div class="steps-container">
+                    <div class="step active" id="step1">
+                        <div class="step-icon">1</div>
+                        <div>معلومات العميل</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-icon">2</div>
+                        <div>طرق الدفع</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-icon">3</div>
+                        <div>تأكيد الطلب</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+                
+        <div class="row">
+            <!-- معلومات العميل -->
+            <div class="col-lg-8">
+                <div class="checkout-section" id="customer-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user me-2"></i>معلومات العميل
+                    </h3>
+                    
+                    <form id="customer-info-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-name" class="form-label">الاسم الكامل</label>
+                                <input type="text" class="form-control" id="customer-name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-phone" class="form-label">رقم الهاتف</label>
+                                <input type="tel" class="form-control" id="customer-phone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-email" class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control" id="customer-email">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customer-city" class="form-label">المدينة</label>
+                                <select class="form-select" id="customer-city" required>
+                                    <option value="">اختر المدينة</option>
+                                    <option value="صنعاء">صنعاء</option>
+                                    <option value="عدن">عدن</option>
+                                    <option value="تعز">تعز</option>
+                                    <option value="الحديدة">الحديدة</option>
+                                    <option value="إب">إب</option>
+                                    <option value="مأرب">مأرب</option>
+                                    <option value="حضرموت">حضرموت</option>
+                                    <option value="شبوة">شبوة</option>
+                                    <option value="المكلا">المكلا</option>
+                                    <option value="ذمار">ذمار</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customer-address" class="form-label">العنوان التفصيلي</label>
+                            <textarea class="form-control" id="customer-address" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="customer-notes" class="form-label">ملاحظات إضافية (اختياري)</label>
+                            <textarea class="form-control" id="customer-notes" rows="2" placeholder="ملاحظات حول العنوان أو وقت التوصيل..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="index.html" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-right me-2"></i>العودة للمتجر
+                            </a>
+                            <button type="button" class="btn btn-primary" onclick="proceedToPayment()">
+                                المتابعة للدفع <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- طرق الدفع -->
+                <div class="checkout-section" id="payment-section" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-credit-card me-2"></i>طرق الدفع
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('cash')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <h5>الدفع عند الاستلام</h5>
+                                <p class="text-muted">ادفع عند استلام الطلب</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('kareemy')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h5>ايداع إلى حساب الكريمي</h5>
+                                <p class="text-muted">تحويل بنكي لحساب الكريمي</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('onecash')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <h5>ايداع إلى وان كاش</h5>
+                                <p class="text-muted">تحويل إلى محفظة وان كاش</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="payment-method" onclick="selectPaymentMethod('jeeb')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <h5>ايداع إلى محفظة جيب</h5>
+                                <p class="text-muted">تحويل إلى محفظة جيب</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="payment-method" onclick="selectPaymentMethod('bank')">
+                                <div class="payment-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <h5>التحويلات البنكية</h5>
+                                <p class="text-muted">تحويل مباشر إلى الحساب البنكي</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- تفاصيل التحويل البنكي -->
+                    <div id="bank-details" style="display: none;">
+                        <h5 class="mt-4 mb-3">تفاصيل التحويل البنكي</h5>
+                        <div class="alert alert-info">
+                            <h6>يرجى استخدام المعلومات التالية للتحويل:</h6>
+                            <p class="mb-1"><strong>اسم البنك:</strong> البنك المركزي اليمني</p>
+                            <p class="mb-1"><strong>اسم المستفيد:</strong> وسيل ستور</p>
+                            <p class="mb-1"><strong>رقم الحساب:</strong> 1234567890</p>
+                            <p class="mb-0"><strong>IBAN:</strong> YE00 1234 5678 9012 3456 7890</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="transfer-number" class="form-label">رقم التحويل</label>
+                            <input type="text" class="form-control" id="transfer-number" placeholder="أدخل رقم التحويل">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="backToCustomerInfo()">
+                            <i class="fas fa-arrow-right me-2"></i>العودة للمعلومات
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="proceedToConfirmation()">
+                            تأكيد الطلب <i class="fas fa-check-circle ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- تأكيد الطلب -->
+                <div class="checkout-section" id="confirmation-section" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-check-circle me-2"></i>تأكيد الطلب
+                    </h3>
+                    
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle me-2"></i>تم تأكيد طلبك بنجاح!</h5>
+                        <p class="mb-0">رقم الطلب: <strong id="order-number">#12345</strong></p>
+                    </div>
+                    
+                    <div class="whatsapp-success" id="whatsapp-success" style="display: none;">
+                        <h5><i class="fab fa-whatsapp me-2"></i>تم إرسال تفاصيل الطلب عبر الواتساب</h5>
+                        <p class="mb-0">سيتم التواصل معك قريباً لتأكيد الطلب</p>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>معلومات الطلب</h5>
+                            <p><strong>الاسم:</strong> <span id="confirm-name"></span></p>
+                            <p><strong>الهاتف:</strong> <span id="confirm-phone"></span></p>
+                            <p><strong>المدينة:</strong> <span id="confirm-city"></span></p>
+                            <p><strong>العنوان:</strong> <span id="confirm-address"></span></p>
+                            <p><strong>طريقة الدفع:</strong> <span id="confirm-payment"></span></p>
+                            <p><strong>ملاحظات:</strong> <span id="confirm-notes"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>معلومات الشحن</h5>
+                            <p>سيتم توصيل طلبك خلال <strong>2-3 أيام عمل</strong></p>
+                            <p>لأي استفسار، يمكنك التواصل معنا عبر:</p>
+                            <p><i class="fas fa-phone me-2"></i> 735981122</p>
+                            <p><i class="fas fa-envelope me-2"></i> wacelalorshe@gmail.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="index.html" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>العودة للرئيسية
+                        </a>
+                        <a href="products.html" class="btn btn-outline-primary ms-2">
+                            <i class="fas fa-shopping-bag me-2"></i>مواصلة التسوق
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تفاصيل المنتج والتواصل -->
+            <div class="col-lg-4">
+                <!-- تفاصيل المنتج -->
+                <div class="checkout-section mb-4">
+                    <h3 class="section-title">
+                        <i class="fas fa-box me-2"></i>تفاصيل الطلب
+                    </h3>
+                    
+                    <div id="order-items">
+                        <div class="text-center py-4">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-3">جاري تحميل تفاصيل الطلب...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>المجموع الفرعي:</span>
+                            <span>$<span id="subtotal">0.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>رسوم الشحن:</span>
+                            <span>$<span id="shipping">5.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>الضريبة (5%):</span>
+                            <span>$<span id="tax">0.00</span></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <strong>المجموع الكلي:</strong>
+                            <strong class="price-tag">$<span id="total">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- وسائل التواصل -->
+                <div class="checkout-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-headset me-2"></i>وسائل التواصل
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <h6>اتصال هاتفي</h6>
+                                <p class="text-muted small">735981122</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="callCustomerService()">
+                                    اتصل الآن
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fab fa-whatsapp"></i>
+                                </div>
+                                <h6>واتساب</h6>
+                                <p class="text-muted small">735981122</p>
+                                <button class="btn btn-sm btn-outline-success" onclick="openWhatsApp()">
+                                    راسلنا
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h6>البريد الإلكتروني</h6>
+                                <p class="text-muted small">wacelalorshe@gmail.com</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="sendEmail()">
+                                    أرسل بريد
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="contact-method">
+                                <div class="contact-icon">
+                                    <i class="fas fa-comment-dots"></i>
+                                </div>
+                                <h6>الدردشة المباشرة</h6>
+                                <p class="text-muted small">متاحة 24/7</p>
+                                <button class="btn btn-sm btn-outline-primary" onclick="openLiveChat()">
+                                    ابدأ الدردشة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الفوتر -->
+    <footer class="py-4 bg-dark text-white mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 وسيل ستور. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -21,298 +601,337 @@
         let selectedPaymentMethod = '';
         let currentStep = 1;
 
-        // دالة محاكاة للحصول على السلة من localStorage
+        // دالة للحصول على السلة
         function getCart() {
-            // محاولة الحصول على منتج الشراء المباشر
-            const buyNowProduct = localStorage.getItem('buyNowProduct');
-            if (buyNowProduct) {
-                return [JSON.parse(buyNowProduct)];
-            }
+            try {
+                // محاولة الحصول على منتج الشراء المباشر
+                const buyNowProduct = localStorage.getItem('buyNowProduct');
+                if (buyNowProduct) {
+                    return [JSON.parse(buyNowProduct)];
+                }
 
-            // إذا لم يكن هناك منتج شراء مباشر، نعود للسلة العادية
-            const cart = localStorage.getItem('waseelStoreCart');
-            return cart ? JSON.parse(cart) : [];
+                // إذا لم يكن هناك منتج شراء مباشر، نعود للسلة العادية
+                const cart = localStorage.getItem('waseelStoreCart');
+                return cart ? JSON.parse(cart) : [];
+            } catch (error) {
+                console.error('خطأ في جلب بيانات السلة:', error);
+                return [];
+            }
         }
 
         // تحديث عدد العناصر في السلة
         function updateCartCount() {
-            const cart = getCart();
-            const cartCount = document.getElementById('cart-count');
-            if (cartCount) {
-                cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            try {
+                const cart = getCart();
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+                }
+            } catch (error) {
+                console.error('خطأ في تحديث عداد السلة:', error);
             }
         }
 
         // عرض تفاصيل الطلب
         function displayOrderItems() {
-            const container = document.getElementById('order-items');
-            const subtotalElement = document.getElementById('subtotal');
-            const taxElement = document.getElementById('tax');
-            const totalElement = document.getElementById('total');
-            
-            if (!container) return;
-            
-            const cart = getCart();
-            
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-3">
-                        <p class="text-muted">لا توجد منتجات في السلة</p>
-                        <a href="products.html" class="btn btn-sm btn-primary">استعرض المنتجات</a>
-                    </div>
-                `;
-                return;
-            }
-            
-            let itemsHTML = '';
-            let subtotal = 0;
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
+            try {
+                const container = document.getElementById('order-items');
+                const subtotalElement = document.getElementById('subtotal');
+                const taxElement = document.getElementById('tax');
+                const totalElement = document.getElementById('total');
                 
-                itemsHTML += `
-                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                        <img src="${item.image}" alt="${item.name}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${item.name}</h6>
-                            <p class="text-muted mb-0">$${item.price} × ${item.quantity}</p>
-                            ${item.purchaseLink ? `<small class="text-info"><i class="fas fa-link me-1"></i>رابط الشراء المباشر</small>` : ''}
+                if (!container) {
+                    console.error('عنصر order-items غير موجود');
+                    return;
+                }
+                
+                const cart = getCart();
+                
+                if (cart.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-3">
+                            <p class="text-muted">لا توجد منتجات في السلة</p>
+                            <a href="products.html" class="btn btn-sm btn-primary">استعرض المنتجات</a>
                         </div>
-                        <div class="text-end">
-                            <strong>$${itemTotal.toFixed(2)}</strong>
+                    `;
+                    return;
+                }
+                
+                let itemsHTML = '';
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    
+                    itemsHTML += `
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                            <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${item.name}</h6>
+                                <p class="text-muted mb-0">$${item.price} × ${item.quantity}</p>
+                                ${item.purchaseLink ? `<small class="text-info"><i class="fas fa-link me-1"></i>رابط الشراء المباشر</small>` : ''}
+                            </div>
+                            <div class="text-end">
+                                <strong>$${itemTotal.toFixed(2)}</strong>
+                            </div>
                         </div>
-                    </div>
-                `;
-            });
-            
-            // حساب التكاليف الإضافية
-            const shipping = 5.00;
-            const tax = subtotal * 0.05;
-            const total = subtotal + shipping + tax;
-            
-            container.innerHTML = itemsHTML;
-            subtotalElement.textContent = subtotal.toFixed(2);
-            taxElement.textContent = tax.toFixed(2);
-            totalElement.textContent = total.toFixed(2);
+                    `;
+                });
+                
+                // حساب التكاليف الإضافية
+                const shipping = 5.00;
+                const tax = subtotal * 0.05;
+                const total = subtotal + shipping + tax;
+                
+                container.innerHTML = itemsHTML;
+                if (subtotalElement) subtotalElement.textContent = subtotal.toFixed(2);
+                if (taxElement) taxElement.textContent = tax.toFixed(2);
+                if (totalElement) totalElement.textContent = total.toFixed(2);
+                
+            } catch (error) {
+                console.error('خطأ في عرض تفاصيل الطلب:', error);
+                const container = document.getElementById('order-items');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>حدث خطأ في تحميل تفاصيل الطلب
+                        </div>
+                    `;
+                }
+            }
         }
 
         // اختيار طريقة الدفع
         function selectPaymentMethod(method) {
-            selectedPaymentMethod = method;
-            
-            // إزالة التحديد من جميع الطرق
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            // إضافة التحديد للطريقة المختارة
-            event.currentTarget.classList.add('selected');
-            
-            // إظهار تفاصيل التحويل البنكي إذا كانت الطريقة المختارة هي التحويل البنكي
-            const bankDetails = document.getElementById('bank-details');
-            if (method === 'bank') {
-                bankDetails.style.display = 'block';
-            } else {
-                bankDetails.style.display = 'none';
+            try {
+                selectedPaymentMethod = method;
+                
+                // إزالة التحديد من جميع الطرق
+                document.querySelectorAll('.payment-method').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                
+                // إضافة التحديد للطريقة المختارة
+                event.currentTarget.classList.add('selected');
+                
+                // إظهار تفاصيل التحويل البنكي إذا كانت الطريقة المختارة هي التحويل البنكي
+                const bankDetails = document.getElementById('bank-details');
+                if (bankDetails) {
+                    bankDetails.style.display = method === 'bank' ? 'block' : 'none';
+                }
+            } catch (error) {
+                console.error('خطأ في اختيار طريقة الدفع:', error);
             }
         }
 
         // الانتقال إلى قسم الدفع
         function proceedToPayment() {
-            // التحقق من صحة النموذج
-            const form = document.getElementById('customer-info-form');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
+            try {
+                // التحقق من صحة النموذج
+                const form = document.getElementById('customer-info-form');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                // الانتقال إلى قسم الدفع
+                document.getElementById('customer-section').style.display = 'none';
+                document.getElementById('payment-section').style.display = 'block';
+                
+                // تحديث الخطوات
+                updateSteps(2);
+            } catch (error) {
+                console.error('خطأ في الانتقال للدفع:', error);
+                alert('حدث خطأ أثناء معالجة البيانات');
             }
-            
-            // الانتقال إلى قسم الدفع
-            document.getElementById('customer-section').style.display = 'none';
-            document.getElementById('payment-section').style.display = 'block';
-            
-            // تحديث الخطوات
-            updateSteps(2);
         }
 
         // العودة إلى معلومات العميل
         function backToCustomerInfo() {
-            document.getElementById('payment-section').style.display = 'none';
-            document.getElementById('customer-section').style.display = 'block';
-            
-            // تحديث الخطوات
-            updateSteps(1);
+            try {
+                document.getElementById('payment-section').style.display = 'none';
+                document.getElementById('customer-section').style.display = 'block';
+                
+                // تحديث الخطوات
+                updateSteps(1);
+            } catch (error) {
+                console.error('خطأ في العودة للمعلومات:', error);
+            }
         }
 
         // إرسال رسالة الواتساب
         function sendWhatsAppMessage() {
-            const customerName = document.getElementById('customer-name').value;
-            const customerPhone = document.getElementById('customer-phone').value;
-            const customerCity = document.getElementById('customer-city').value;
-            const customerAddress = document.getElementById('customer-address').value;
-            const customerNotes = document.getElementById('customer-notes').value;
-            const orderNumber = document.getElementById('order-number').textContent;
-            
-            // تحديد اسم طريقة الدفع
-            let paymentMethodName = '';
-            switch(selectedPaymentMethod) {
-                case 'cash':
-                    paymentMethodName = 'الدفع عند الاستلام';
-                    break;
-                case 'kareemy':
-                    paymentMethodName = 'ايداع إلى حساب الكريمي';
-                    break;
-                case 'onecash':
-                    paymentMethodName = 'ايداع إلى وان كاش';
-                    break;
-                case 'jeeb':
-                    paymentMethodName = 'ايداع إلى محفظة جيب';
-                    break;
-                case 'bank':
-                    paymentMethodName = 'التحويلات البنكية';
-                    break;
-            }
-            
-            // الحصول على تفاصيل الطلب
-            const cart = getCart();
-            let orderDetails = '';
-            let totalAmount = 0;
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                totalAmount += itemTotal;
-                orderDetails += `- ${item.name} (${item.quantity} × $${item.price}) = $${itemTotal.toFixed(2)}`;
+            try {
+                const customerName = document.getElementById('customer-name').value;
+                const customerPhone = document.getElementById('customer-phone').value;
+                const customerCity = document.getElementById('customer-city').value;
+                const customerAddress = document.getElementById('customer-address').value;
+                const customerNotes = document.getElementById('customer-notes').value;
+                const orderNumber = document.getElementById('order-number').textContent;
                 
-                // إضافة رابط الشراء المباشر إذا كان موجوداً
-                if (item.purchaseLink) {
-                    orderDetails += ` (رابط مباشر: ${item.purchaseLink})`;
+                // تحديد اسم طريقة الدفع
+                let paymentMethodName = '';
+                switch(selectedPaymentMethod) {
+                    case 'cash':
+                        paymentMethodName = 'الدفع عند الاستلام';
+                        break;
+                    case 'kareemy':
+                        paymentMethodName = 'ايداع إلى حساب الكريمي';
+                        break;
+                    case 'onecash':
+                        paymentMethodName = 'ايداع إلى وان كاش';
+                        break;
+                    case 'jeeb':
+                        paymentMethodName = 'ايداع إلى محفظة جيب';
+                        break;
+                    case 'bank':
+                        paymentMethodName = 'التحويلات البنكية';
+                        break;
                 }
                 
-                orderDetails += `\n`;
-            });
-            
-            // إضافة التكاليف الإضافية
-            const shipping = 5.00;
-            const tax = totalAmount * 0.05;
-            const finalTotal = totalAmount + shipping + tax;
-            
-            orderDetails += `\nرسوم الشحن: $${shipping.toFixed(2)}`;
-            orderDetails += `\nالضريبة: $${tax.toFixed(2)}`;
-            orderDetails += `\nالمجموع الكلي: $${finalTotal.toFixed(2)}`;
-            
-            // إنشاء نص الرسالة
-            const message = `🛒 طلب جديد من وسيل ستور\n\n` +
-                           `📦 رقم الطلب: ${orderNumber}\n` +
-                           `👤 الاسم: ${customerName}\n` +
-                           `📞 الهاتف: ${customerPhone}\n` +
-                           `🏙️ المدينة: ${customerCity}\n` +
-                           `📍 العنوان: ${customerAddress}\n` +
-                           `💳 طريقة الدفع: ${paymentMethodName}\n` +
-                           `📝 ملاحظات: ${customerNotes || 'لا توجد'}\n\n` +
-                           `🛍️ تفاصيل المنتجات:\n${orderDetails}`;
-            
-            // تشفير النص للرابط
-            const encodedMessage = encodeURIComponent(message);
-            
-            // رقم الواتساب الصحيح (بدون +)
-            const whatsappNumber = "967735981122";
-            
-            // إنشاء رابط الواتساب
-            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-            
-            console.log('📤 رابط الواتساب:', whatsappURL);
-            
-            // فتح الرابط في نافذة جديدة
-            window.open(whatsappURL, '_blank');
-            
-            // إظهار رسالة نجاح الإرسال
-            document.getElementById('whatsapp-success').style.display = 'block';
-            
-            // إرسال نسخة إضافية إلى البريد الإلكتروني (اختياري)
-            sendEmailConfirmation(customerName, customerPhone, orderNumber, message);
-        }
-
-        // إرسال تأكيد عبر البريد الإلكتروني (دالة مساعدة)
-        function sendEmailConfirmation(name, phone, orderNumber, orderDetails) {
-            const subject = `تأكيد طلب جديد - ${orderNumber}`;
-            const body = `تفاصيل الطلب:\n\n${orderDetails}\n\nتم استلام الطلب بنجاح وسيتم التواصل مع العميل قريباً.`;
-            
-            const mailtoLink = `mailto:wacelalorshe@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // فتح عميل البريد الإلكتروني (سيطلب المستخدم التأكيد)
-            setTimeout(() => {
-                window.location.href = mailtoLink;
-            }, 1000);
+                // الحصول على تفاصيل الطلب
+                const cart = getCart();
+                let orderDetails = '';
+                let totalAmount = 0;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    totalAmount += itemTotal;
+                    orderDetails += `- ${item.name} (${item.quantity} × $${item.price}) = $${itemTotal.toFixed(2)}`;
+                    
+                    // إضافة رابط الشراء المباشر إذا كان موجوداً
+                    if (item.purchaseLink) {
+                        orderDetails += ` (رابط مباشر: ${item.purchaseLink})`;
+                    }
+                    
+                    orderDetails += `\n`;
+                });
+                
+                // إضافة التكاليف الإضافية
+                const shipping = 5.00;
+                const tax = totalAmount * 0.05;
+                const finalTotal = totalAmount + shipping + tax;
+                
+                orderDetails += `\nرسوم الشحن: $${shipping.toFixed(2)}`;
+                orderDetails += `\nالضريبة: $${tax.toFixed(2)}`;
+                orderDetails += `\nالمجموع الكلي: $${finalTotal.toFixed(2)}`;
+                
+                // إنشاء نص الرسالة
+                const message = `🛒 طلب جديد من وسيل ستور\n\n` +
+                               `📦 رقم الطلب: ${orderNumber}\n` +
+                               `👤 الاسم: ${customerName}\n` +
+                               `📞 الهاتف: ${customerPhone}\n` +
+                               `🏙️ المدينة: ${customerCity}\n` +
+                               `📍 العنوان: ${customerAddress}\n` +
+                               `💳 طريقة الدفع: ${paymentMethodName}\n` +
+                               `📝 ملاحظات: ${customerNotes || 'لا توجد'}\n\n` +
+                               `🛍️ تفاصيل المنتجات:\n${orderDetails}`;
+                
+                // تشفير النص للرابط
+                const encodedMessage = encodeURIComponent(message);
+                
+                // رقم الواتساب
+                const whatsappNumber = "967735981122";
+                
+                // إنشاء رابط الواتساب
+                const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+                
+                console.log('📤 رابط الواتساب:', whatsappURL);
+                
+                // فتح الرابط في نافذة جديدة
+                window.open(whatsappURL, '_blank');
+                
+                // إظهار رسالة نجاح الإرسال
+                const whatsappSuccess = document.getElementById('whatsapp-success');
+                if (whatsappSuccess) {
+                    whatsappSuccess.style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('خطأ في إرسال رسالة الواتساب:', error);
+                alert('حدث خطأ أثناء إرسال الرسالة');
+            }
         }
 
         // الانتقال إلى تأكيد الطلب
         function proceedToConfirmation() {
-            if (!selectedPaymentMethod) {
-                alert('يرجى اختيار طريقة الدفع');
-                return;
+            try {
+                if (!selectedPaymentMethod) {
+                    alert('يرجى اختيار طريقة الدفع');
+                    return;
+                }
+                
+                // الانتقال إلى قسم التأكيد
+                document.getElementById('payment-section').style.display = 'none';
+                document.getElementById('confirmation-section').style.display = 'block';
+                
+                // ملء معلومات التأكيد
+                document.getElementById('confirm-name').textContent = document.getElementById('customer-name').value;
+                document.getElementById('confirm-phone').textContent = document.getElementById('customer-phone').value;
+                document.getElementById('confirm-city').textContent = document.getElementById('customer-city').value;
+                document.getElementById('confirm-address').textContent = document.getElementById('customer-address').value;
+                document.getElementById('confirm-notes').textContent = document.getElementById('customer-notes').value || 'لا توجد';
+                
+                // تحديد اسم طريقة الدفع
+                let paymentMethodName = '';
+                switch(selectedPaymentMethod) {
+                    case 'cash':
+                        paymentMethodName = 'الدفع عند الاستلام';
+                        break;
+                    case 'kareemy':
+                        paymentMethodName = 'ايداع إلى حساب الكريمي';
+                        break;
+                    case 'onecash':
+                        paymentMethodName = 'ايداع إلى وان كاش';
+                        break;
+                    case 'jeeb':
+                        paymentMethodName = 'ايداع إلى محفظة جيب';
+                        break;
+                    case 'bank':
+                        paymentMethodName = 'التحويلات البنكية';
+                        break;
+                }
+                document.getElementById('confirm-payment').textContent = paymentMethodName;
+                
+                // إنشاء رقم طلب عشوائي
+                document.getElementById('order-number').textContent = '#' + Math.floor(10000 + Math.random() * 90000);
+                
+                // تحديث الخطوات
+                updateSteps(3);
+                
+                // تفريغ السلة بعد إتمام الطلب
+                localStorage.removeItem('waseelStoreCart');
+                localStorage.removeItem('buyNowProduct');
+                updateCartCount();
+                
+                // إرسال رسالة الواتساب
+                sendWhatsAppMessage();
+                
+            } catch (error) {
+                console.error('خطأ في تأكيد الطلب:', error);
+                alert('حدث خطأ أثناء تأكيد الطلب');
             }
-            
-            // الانتقال إلى قسم التأكيد
-            document.getElementById('payment-section').style.display = 'none';
-            document.getElementById('confirmation-section').style.display = 'block';
-            
-            // ملء معلومات التأكيد
-            document.getElementById('confirm-name').textContent = document.getElementById('customer-name').value;
-            document.getElementById('confirm-phone').textContent = document.getElementById('customer-phone').value;
-            document.getElementById('confirm-city').textContent = document.getElementById('customer-city').value;
-            document.getElementById('confirm-address').textContent = document.getElementById('customer-address').value;
-            document.getElementById('confirm-notes').textContent = document.getElementById('customer-notes').value || 'لا توجد';
-            
-            // تحديد اسم طريقة الدفع
-            let paymentMethodName = '';
-            switch(selectedPaymentMethod) {
-                case 'cash':
-                    paymentMethodName = 'الدفع عند الاستلام';
-                    break;
-                case 'kareemy':
-                    paymentMethodName = 'ايداع إلى حساب الكريمي';
-                    break;
-                case 'onecash':
-                    paymentMethodName = 'ايداع إلى وان كاش';
-                    break;
-                case 'jeeb':
-                    paymentMethodName = 'ايداع إلى محفظة جيب';
-                    break;
-                case 'bank':
-                    paymentMethodName = 'التحويلات البنكية';
-                    break;
-            }
-            document.getElementById('confirm-payment').textContent = paymentMethodName;
-            
-            // إنشاء رقم طلب عشوائي
-            document.getElementById('order-number').textContent = '#' + Math.floor(10000 + Math.random() * 90000);
-            
-            // تحديث الخطوات
-            updateSteps(3);
-            
-            // تفريغ السلة بعد إتمام الطلب
-            localStorage.removeItem('waseelStoreCart');
-            localStorage.removeItem('buyNowProduct');
-            updateCartCount();
-            
-            // إرسال رسالة الواتساب
-            sendWhatsAppMessage();
         }
 
         // تحديث الخطوات
         function updateSteps(step) {
-            currentStep = step;
-            const steps = document.querySelectorAll('.step');
-            
-            steps.forEach((stepEl, index) => {
-                stepEl.classList.remove('active', 'completed');
+            try {
+                currentStep = step;
+                const steps = document.querySelectorAll('.step');
                 
-                if (index + 1 < step) {
-                    stepEl.classList.add('completed');
-                } else if (index + 1 === step) {
-                    stepEl.classList.add('active');
-                }
-            });
+                steps.forEach((stepEl, index) => {
+                    stepEl.classList.remove('active', 'completed');
+                    
+                    if (index + 1 < step) {
+                        stepEl.classList.add('completed');
+                    } else if (index + 1 === step) {
+                        stepEl.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                console.error('خطأ في تحديث الخطوات:', error);
+            }
         }
 
         // دوال التواصل
@@ -336,9 +955,14 @@
         // التهيئة
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 صفحة الشراء جاهزة');
-            updateCartCount();
-            displayOrderItems();
-            updateSteps(1);
+            try {
+                updateCartCount();
+                displayOrderItems();
+                updateSteps(1);
+            } catch (error) {
+                console.error('خطأ في تهيئة الصفحة:', error);
+                alert('حدث خطأ في تحميل الصفحة. يرجى تحديث الصفحة.');
+            }
         });
     </script>
 </body>

@@ -194,60 +194,6 @@
         .table td {
             vertical-align: middle;
         }
-        
-        /* تحسينات حالة الطلب */
-        .order-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-processing {
-            background-color: #cce7ff;
-            color: #004085;
-        }
-        
-        .status-shipped {
-            background-color: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .status-delivered {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        /* تحسينات الإجراءات */
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        
-        .action-buttons .btn {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-        }
-        
-        /* تحسينات البحث والتصفية */
-        .search-filter-container {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
@@ -273,18 +219,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#" onclick="showProductsManagement()">
+                            <a class="nav-link text-white" href="products.html">
                                 <i class="fas fa-boxes me-2"></i>إدارة المنتجات
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#" onclick="showOrdersManagement()">
+                            <a class="nav-link text-white" href="orders.html">
                                 <i class="fas fa-shopping-cart me-2"></i>إدارة الطلبات
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#" onclick="showCustomersManagement()">
-                                <i class="fas fa-users me-2"></i>إدارة العملاء
+                            <a class="nav-link text-white" href="customers.html">
+                                <i class="fas fa-users me-2"></i>العملاء
                             </a>
                         </li>
                         <li class="nav-item">
@@ -307,7 +253,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <!-- العنوان الرئيسي -->
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h2 class="text-primary" id="page-title">
+                    <h2 class="text-primary">
                         <i class="fas fa-tachometer-alt me-2"></i>لوحة التحكم
                     </h2>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -320,143 +266,101 @@
                     </div>
                 </div>
 
-                <!-- قسم لوحة التحكم الرئيسية -->
-                <div id="dashboard-content">
-                    <!-- البطاقات الإحصائية -->
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="card text-white bg-primary mb-3 stat-card">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-box me-2"></i>المنتجات
-                                    </h5>
-                                    <p class="card-text display-4" id="products-count">0</p>
-                                    <small>إجمالي المنتجات</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-success mb-3 stat-card">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-shopping-cart me-2"></i>الطلبات
-                                    </h5>
-                                    <p class="card-text display-4" id="orders-count">0</p>
-                                    <small>طلبات جديدة</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-warning mb-3 stat-card">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-users me-2"></i>العملاء
-                                    </h5>
-                                    <p class="card-text display-4" id="customers-count">0</p>
-                                    <small>عملاء مسجلين</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-info mb-3 stat-card">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title">
-                                        <i class="fas fa-chart-line me-2"></i>الإيرادات
-                                    </h5>
-                                    <p class="card-text display-4" id="revenue-count">$0</p>
-                                    <small>إجمالي الإيرادات</small>
-                                </div>
+                <!-- البطاقات الإحصائية -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary mb-3 stat-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-box me-2"></i>المنتجات
+                                </h5>
+                                <p class="card-text display-4" id="products-count">0</p>
+                                <small>إجمالي المنتجات</small>
                             </div>
                         </div>
                     </div>
-
-                    <!-- أزرار الإجراءات السريعة -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="card admin-card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-bolt me-2"></i>الإجراءات السريعة
-                                    </h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-success" onclick="showAddProductForm()">
-                                            <i class="fas fa-plus me-2"></i>إضافة منتج جديد
-                                        </button>
-                                        <button class="btn btn-outline-primary" onclick="showProductsManagement()">
-                                            <i class="fas fa-list me-2"></i>إدارة المنتجات
-                                        </button>
-                                        <button class="btn btn-warning" onclick="addSampleProduct()">
-                                            <i class="fas fa-vial me-2"></i>إضافة منتج تجريبي
-                                        </button>
-                                        <button class="btn btn-info" onclick="testFirebaseConnection()">
-                                            <i class="fas fa-wifi me-2"></i>اختبار الاتصال
-                                        </button>
-                                    </div>
-                                </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success mb-3 stat-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-shopping-cart me-2"></i>الطلبات
+                                </h5>
+                                <p class="card-text display-4" id="orders-count">0</p>
+                                <small>طلبات جديدة</small>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning mb-3 stat-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-users me-2"></i>العملاء
+                                </h5>
+                                <p class="card-text display-4" id="customers-count">0</p>
+                                <small>عملاء مسجلين</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info mb-3 stat-card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-line me-2"></i>الإيرادات
+                                </h5>
+                                <p class="card-text display-4" id="revenue-count">$0</p>
+                                <small>إجمالي الإيرادات</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- أحدث المنتجات -->
-                    <div class="row mt-5">
-                        <div class="col-12">
-                            <div class="card admin-card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-boxes me-2"></i>أحدث المنتجات
-                                    </h5>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="showProductsManagement()">
-                                        عرض الكل <i class="fas fa-arrow-left ms-1"></i>
+                <!-- أزرار الإجراءات السريعة -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-bolt me-2"></i>الإجراءات السريعة
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-success" onclick="showAddProductForm()">
+                                        <i class="fas fa-plus me-2"></i>إضافة منتج جديد
+                                    </button>
+                                    <a href="products.html" class="btn btn-outline-primary">
+                                        <i class="fas fa-list me-2"></i>إدارة المنتجات
+                                    </a>
+                                    <button class="btn btn-warning" onclick="addSampleProduct()">
+                                        <i class="fas fa-vial me-2"></i>إضافة منتج تجريبي
+                                    </button>
+                                    <button class="btn btn-info" onclick="testFirebaseConnection()">
+                                        <i class="fas fa-wifi me-2"></i>اختبار الاتصال
                                     </button>
                                 </div>
-                                <div class="card-body">
-                                    <div id="admin-products-container" class="row">
-                                        <!-- المنتجات تظهر هنا -->
-                                        <div class="col-12 text-center">
-                                            <div class="loading-spinner"></div>
-                                            <p class="mt-3">جاري تحميل المنتجات...</p>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- الطلبات الحديثة -->
-                    <div class="row mt-5">
-                        <div class="col-12">
-                            <div class="card admin-card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title mb-0">
-                                        <i class="fas fa-shopping-cart me-2"></i>أحدث الطلبات
-                                    </h5>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="showOrdersManagement()">
-                                        عرض الكل <i class="fas fa-arrow-left ms-1"></i>
-                                    </button>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>رقم الطلب</th>
-                                                    <th>العميل</th>
-                                                    <th>التاريخ</th>
-                                                    <th>المبلغ</th>
-                                                    <th>الحالة</th>
-                                                    <th>الإجراءات</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="recent-orders">
-                                                <tr>
-                                                    <td colspan="6" class="text-center text-muted py-4">
-                                                        لا توجد طلبات حديثة
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                <!-- أحدث المنتجات -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-boxes me-2"></i>أحدث المنتجات
+                                </h5>
+                                <a href="products.html" class="btn btn-sm btn-outline-primary">
+                                    عرض الكل <i class="fas fa-arrow-left ms-1"></i>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div id="admin-products-container" class="row">
+                                    <!-- المنتجات تظهر هنا -->
+                                    <div class="col-12 text-center">
+                                        <div class="loading-spinner"></div>
+                                        <p class="mt-3">جاري تحميل المنتجات...</p>
                                     </div>
                                 </div>
                             </div>
@@ -464,192 +368,47 @@
                     </div>
                 </div>
 
-                <!-- قسم إدارة المنتجات -->
-                <div id="products-management-content" class="d-none">
-                    <div class="card admin-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-boxes me-2"></i>إدارة المنتجات
-                            </h5>
-                            <button class="btn btn-sm btn-success" onclick="showAddProductForm()">
-                                <i class="fas fa-plus me-1"></i>إضافة منتج
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <!-- شريط البحث والتصفية -->
-                            <div class="search-filter-container">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" id="product-search" class="form-control" placeholder="ابحث عن منتج...">
-                                            <button class="btn btn-primary" onclick="searchProducts()">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <select id="category-filter" class="form-select" onchange="filterProductsByCategory()">
-                                            <option value="">جميع الفئات</option>
-                                            <option value="إلكترونيات">إلكترونيات</option>
-                                            <option value="ملابس">ملابس</option>
-                                            <option value="أجهزة">أجهزة</option>
-                                            <option value="منزلية">منزلية</option>
-                                            <option value="رياضية">رياضية</option>
-                                            <option value="أخرى">أخرى</option>
-                                        </select>
-                                    </div>
+                <!-- الطلبات الحديثة -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card admin-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-shopping-cart me-2"></i>أحدث الطلبات
+                                </h5>
+                                <a href="orders.html" class="btn btn-sm btn-outline-primary">
+                                    عرض الكل <i class="fas fa-arrow-left ms-1"></i>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>رقم الطلب</th>
+                                                <th>العميل</th>
+                                                <th>التاريخ</th>
+                                                <th>المبلغ</th>
+                                                <th>الحالة</th>
+                                                <th>الإجراءات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recent-orders">
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted py-4">
+                                                    لا توجد طلبات حديثة
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-
-                            <!-- جدول المنتجات -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>الصورة</th>
-                                            <th>اسم المنتج</th>
-                                            <th>الفئة</th>
-                                            <th>السعر</th>
-                                            <th>الحالة</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="products-table-body">
-                                        <tr>
-                                            <td colspan="6" class="text-center text-muted py-4">
-                                                <div class="loading-spinner"></div>
-                                                <p class="mt-3">جاري تحميل المنتجات...</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم إدارة الطلبات -->
-                <div id="orders-management-content" class="d-none">
-                    <div class="card admin-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-shopping-cart me-2"></i>إدارة الطلبات
-                            </h5>
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="refreshOrders()">
-                                    <i class="fas fa-redo me-1"></i>تحديث
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <!-- شريط البحث والتصفية -->
-                            <div class="search-filter-container">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" id="order-search" class="form-control" placeholder="ابحث برقم الطلب أو اسم العميل...">
-                                            <button class="btn btn-primary" onclick="searchOrders()">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <select id="status-filter" class="form-select" onchange="filterOrdersByStatus()">
-                                            <option value="">جميع الحالات</option>
-                                            <option value="pending">معلق</option>
-                                            <option value="processing">قيد المعالجة</option>
-                                            <option value="shipped">تم الشحن</option>
-                                            <option value="delivered">تم التسليم</option>
-                                            <option value="cancelled">ملغي</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- جدول الطلبات -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>رقم الطلب</th>
-                                            <th>العميل</th>
-                                            <th>التاريخ</th>
-                                            <th>المنتجات</th>
-                                            <th>المبلغ</th>
-                                            <th>الحالة</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="orders-table-body">
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted py-4">
-                                                لا توجد طلبات
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم إدارة العملاء -->
-                <div id="customers-management-content" class="d-none">
-                    <div class="card admin-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-users me-2"></i>إدارة العملاء
-                            </h5>
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-primary" onclick="refreshCustomers()">
-                                    <i class="fas fa-redo me-1"></i>تحديث
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <!-- شريط البحث -->
-                            <div class="search-filter-container">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <input type="text" id="customer-search" class="form-control" placeholder="ابحث عن عميل...">
-                                            <button class="btn btn-primary" onclick="searchCustomers()">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- جدول العملاء -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>اسم العميل</th>
-                                            <th>البريد الإلكتروني</th>
-                                            <th>رقم الهاتف</th>
-                                            <th>عدد الطلبات</th>
-                                            <th>إجمالي المشتريات</th>
-                                            <th>تاريخ التسجيل</th>
-                                            <th>الإجراءات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="customers-table-body">
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted py-4">
-                                                لا توجد بيانات عملاء
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- قسم التصحيح والاتصال -->
-                <div class="row mt-5" id="debug-section">
+                <div class="row mt-5">
                     <div class="col-12">
                         <div class="card border-warning">
                             <div class="card-header bg-warning text-dark">
@@ -704,19 +463,17 @@
         </div>
     </div>
 
-    <!-- نموذج إضافة/تعديل منتج -->
-    <div id="product-modal" class="form-modal d-none">
+    <!-- نموذج إضافة منتج -->
+    <div id="add-product-modal" class="form-modal d-none">
         <div class="form-modal-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="text-primary" id="product-modal-title">
+                <h4 class="text-primary">
                     <i class="fas fa-plus me-2"></i>إضافة منتج جديد
                 </h4>
-                <button type="button" class="btn-close" onclick="hideProductForm()"></button>
+                <button type="button" class="btn-close" onclick="hideAddProductForm()"></button>
             </div>
             
-            <form id="product-form">
-                <input type="hidden" id="product-id">
-                
+            <form id="add-product-form">
                 <div class="mb-3">
                     <label for="product-name" class="form-label">اسم المنتج</label>
                     <input type="text" class="form-control" id="product-name" required>
@@ -756,20 +513,11 @@
                     <input type="url" class="form-control" id="product-purchase-link" placeholder="https://example.com/buy">
                 </div>
                 
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="product-active">
-                        <label class="form-check-label" for="product-active">
-                            المنتج نشط
-                        </label>
-                    </div>
-                </div>
-                
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-success flex-fill" id="product-form-submit">
+                    <button type="submit" class="btn btn-success flex-fill">
                         <i class="fas fa-save me-2"></i>حفظ المنتج
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="hideProductForm()">
+                    <button type="button" class="btn btn-secondary" onclick="hideAddProductForm()">
                         <i class="fas fa-times me-2"></i>إلغاء
                     </button>
                 </div>
@@ -783,417 +531,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-db.js"></script>
+    <script src="../js/admin-products.js"></script>
 
     <script>
-        // متغيرات التطبيق
-        let currentEditingProduct = null;
-        let allProducts = [];
-        let allOrders = [];
-        let allCustomers = [];
-
-        // دوال التنقل بين الأقسام
-        function showDashboard() {
-            document.getElementById('dashboard-content').classList.remove('d-none');
-            document.getElementById('products-management-content').classList.add('d-none');
-            document.getElementById('orders-management-content').classList.add('d-none');
-            document.getElementById('customers-management-content').classList.add('d-none');
-            document.getElementById('page-title').innerHTML = '<i class="fas fa-tachometer-alt me-2"></i>لوحة التحكم';
-            document.getElementById('debug-section').classList.remove('d-none');
-            
-            // تحديث البيانات
-            updateStatistics();
-            displayRecentProducts();
-            displayRecentOrders();
-        }
-
-        function showProductsManagement() {
-            document.getElementById('dashboard-content').classList.add('d-none');
-            document.getElementById('products-management-content').classList.remove('d-none');
-            document.getElementById('orders-management-content').classList.add('d-none');
-            document.getElementById('customers-management-content').classList.add('d-none');
-            document.getElementById('page-title').innerHTML = '<i class="fas fa-boxes me-2"></i>إدارة المنتجات';
-            document.getElementById('debug-section').classList.add('d-none');
-            
-            // تحميل المنتجات
-            loadProductsTable();
-        }
-
-        function showOrdersManagement() {
-            document.getElementById('dashboard-content').classList.add('d-none');
-            document.getElementById('products-management-content').classList.add('d-none');
-            document.getElementById('orders-management-content').classList.remove('d-none');
-            document.getElementById('customers-management-content').classList.add('d-none');
-            document.getElementById('page-title').innerHTML = '<i class="fas fa-shopping-cart me-2"></i>إدارة الطلبات';
-            document.getElementById('debug-section').classList.add('d-none');
-            
-            // تحميل الطلبات
-            loadOrdersTable();
-        }
-
-        function showCustomersManagement() {
-            document.getElementById('dashboard-content').classList.add('d-none');
-            document.getElementById('products-management-content').classList.add('d-none');
-            document.getElementById('orders-management-content').classList.add('d-none');
-            document.getElementById('customers-management-content').classList.remove('d-none');
-            document.getElementById('page-title').innerHTML = '<i class="fas fa-users me-2"></i>إدارة العملاء';
-            document.getElementById('debug-section').classList.add('d-none');
-            
-            // تحميل العملاء
-            loadCustomersTable();
-        }
-
-        // دوال إدارة المنتجات
-        function showAddProductForm() {
-            document.getElementById('product-modal-title').innerHTML = '<i class="fas fa-plus me-2"></i>إضافة منتج جديد';
-            document.getElementById('product-form-submit').innerHTML = '<i class="fas fa-save me-2"></i>حفظ المنتج';
-            document.getElementById('product-form').reset();
-            document.getElementById('product-id').value = '';
-            currentEditingProduct = null;
-            
-            document.getElementById('product-modal').classList.remove('d-none');
-            document.getElementById('product-modal').classList.add('d-flex');
-        }
-
-        function showEditProductForm(product) {
-            document.getElementById('product-modal-title').innerHTML = '<i class="fas fa-edit me-2"></i>تعديل المنتج';
-            document.getElementById('product-form-submit').innerHTML = '<i class="fas fa-save me-2"></i>تحديث المنتج';
-            
-            // تعبئة البيانات
-            document.getElementById('product-id').value = product.id;
-            document.getElementById('product-name').value = product.name;
-            document.getElementById('product-price').value = product.price;
-            document.getElementById('product-description').value = product.description;
-            document.getElementById('product-category').value = product.category;
-            document.getElementById('product-image').value = product.image;
-            document.getElementById('product-purchase-link').value = product.purchaseLink || '';
-            document.getElementById('product-active').checked = product.active !== false;
-            
-            currentEditingProduct = product;
-            
-            document.getElementById('product-modal').classList.remove('d-none');
-            document.getElementById('product-modal').classList.add('d-flex');
-        }
-
-        function hideProductForm() {
-            document.getElementById('product-modal').classList.remove('d-flex');
-            document.getElementById('product-modal').classList.add('d-none');
-            document.getElementById('product-form').reset();
-            currentEditingProduct = null;
-        }
-
-        // معالجة إرسال نموذج المنتج
-        document.getElementById('product-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const productId = document.getElementById('product-id').value;
-            const productName = document.getElementById('product-name').value;
-            const productPrice = document.getElementById('product-price').value;
-            const productDescription = document.getElementById('product-description').value;
-            const productCategory = document.getElementById('product-category').value;
-            const productImage = document.getElementById('product-image').value;
-            const purchaseLink = document.getElementById('product-purchase-link').value;
-            const isActive = document.getElementById('product-active').checked;
-            
-            if (!productName || !productPrice || !productCategory) {
-                alert('❌ يرجى ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            const productData = {
-                name: productName,
-                price: parseFloat(productPrice),
-                description: productDescription || 'لا يوجد وصف',
-                category: productCategory,
-                image: productImage || `https://via.placeholder.com/300x200/007bff/ffffff?text=${encodeURIComponent(productName)}`,
-                purchaseLink: purchaseLink,
-                active: isActive,
-                dateAdded: new Date().toISOString(),
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            try {
-                if (productId) {
-                    // تحديث المنتج
-                    await updateProductInFirebase(productId, productData);
-                    alert(`✅ تم تحديث "${productName}" بنجاح!`);
-                } else {
-                    // إضافة منتج جديد
-                    await addProductToFirebase(productData);
-                    alert(`✅ تم إضافة "${productName}" بنجاح!`);
-                }
-                
-                hideProductForm();
-                
-                // تحديث العرض
-                setTimeout(() => {
-                    updateStatistics();
-                    displayRecentProducts();
-                    loadProductsTable();
-                    checkSystemStatus();
-                }, 1000);
-                
-            } catch (error) {
-                console.error('❌ فشل في العملية:', error);
-                alert(`❌ فشل في العملية: ${error.message}`);
-            }
-        });
-
-        async function deleteProduct(productId, productName) {
-            if (confirm(`هل أنت متأكد من حذف المنتج "${productName}"؟`)) {
-                try {
-                    await deleteProductFromFirebase(productId);
-                    alert(`✅ تم حذف "${productName}" بنجاح!`);
-                    
-                    // تحديث العرض
-                    updateStatistics();
-                    displayRecentProducts();
-                    loadProductsTable();
-                } catch (error) {
-                    console.error('❌ فشل في الحذف:', error);
-                    alert(`❌ فشل في حذف المنتج: ${error.message}`);
-                }
-            }
-        }
-
-        // دوال إدارة الطلبات
-        async function loadOrdersTable() {
-            try {
-                // محاكاة جلب الطلبات (يمكن استبدالها بالاتصال الفعلي مع Firebase)
-                const orders = await getOrdersFromFirebase();
-                allOrders = orders;
-                
-                const tableBody = document.getElementById('orders-table-body');
-                
-                if (orders.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                لا توجد طلبات
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                let ordersHTML = '';
-                orders.forEach(order => {
-                    const statusClass = getOrderStatusClass(order.status);
-                    const statusText = getOrderStatusText(order.status);
-                    const orderDate = new Date(order.date).toLocaleDateString('ar-EG');
-                    
-                    ordersHTML += `
-                        <tr>
-                            <td>#${order.id}</td>
-                            <td>${order.customer.name}</td>
-                            <td>${orderDate}</td>
-                            <td>${order.items.length} منتج</td>
-                            <td>$${order.total}</td>
-                            <td><span class="order-status ${statusClass}">${statusText}</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetails('${order.id}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="updateOrderStatus('${order.id}', 'processing')">
-                                        <i class="fas fa-cog"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="updateOrderStatus('${order.id}', 'shipped')">
-                                        <i class="fas fa-shipping-fast"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="updateOrderStatus('${order.id}', 'cancelled')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = ordersHTML;
-            } catch (error) {
-                console.error('❌ خطأ في تحميل الطلبات:', error);
-                document.getElementById('orders-table-body').innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-danger py-4">
-                            <i class="fas fa-exclamation-triangle me-2"></i>حدث خطأ في تحميل الطلبات
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function getOrderStatusClass(status) {
-            const statusClasses = {
-                'pending': 'status-pending',
-                'processing': 'status-processing',
-                'shipped': 'status-shipped',
-                'delivered': 'status-delivered',
-                'cancelled': 'status-cancelled'
-            };
-            return statusClasses[status] || 'status-pending';
-        }
-
-        function getOrderStatusText(status) {
-            const statusTexts = {
-                'pending': 'معلق',
-                'processing': 'قيد المعالجة',
-                'shipped': 'تم الشحن',
-                'delivered': 'تم التسليم',
-                'cancelled': 'ملغي'
-            };
-            return statusTexts[status] || 'معلق';
-        }
-
-        async function updateOrderStatus(orderId, newStatus) {
-            try {
-                // محاكاة تحديث حالة الطلب (يمكن استبدالها بالاتصال الفعلي مع Firebase)
-                alert(`✅ تم تحديث حالة الطلب #${orderId} إلى "${getOrderStatusText(newStatus)}"`);
-                
-                // تحديث العرض
-                loadOrdersTable();
-                displayRecentOrders();
-            } catch (error) {
-                console.error('❌ خطأ في تحديث حالة الطلب:', error);
-                alert(`❌ فشل في تحديث حالة الطلب: ${error.message}`);
-            }
-        }
-
-        function viewOrderDetails(orderId) {
-            alert(`عرض تفاصيل الطلب #${orderId} - هذه الميزة قيد التطوير`);
-        }
-
-        // دوال إدارة العملاء
-        async function loadCustomersTable() {
-            try {
-                // محاكاة جلب العملاء (يمكن استبدالها بالاتصال الفعلي مع Firebase)
-                const customers = await getCustomersFromFirebase();
-                allCustomers = customers;
-                
-                const tableBody = document.getElementById('customers-table-body');
-                
-                if (customers.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                لا توجد بيانات عملاء
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                let customersHTML = '';
-                customers.forEach(customer => {
-                    const registerDate = new Date(customer.registerDate).toLocaleDateString('ar-EG');
-                    
-                    customersHTML += `
-                        <tr>
-                            <td>${customer.name}</td>
-                            <td>${customer.email}</td>
-                            <td>${customer.phone || 'غير متوفر'}</td>
-                            <td>${customer.ordersCount || 0}</td>
-                            <td>$${customer.totalSpent || 0}</td>
-                            <td>${registerDate}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="viewCustomerDetails('${customer.id}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="contactCustomer('${customer.id}')">
-                                        <i class="fas fa-envelope"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = customersHTML;
-            } catch (error) {
-                console.error('❌ خطأ في تحميل العملاء:', error);
-                document.getElementById('customers-table-body').innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-danger py-4">
-                            <i class="fas fa-exclamation-triangle me-2"></i>حدث خطأ في تحميل العملاء
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function viewCustomerDetails(customerId) {
-            alert(`عرض تفاصيل العميل ${customerId} - هذه الميزة قيد التطوير`);
-        }
-
-        function contactCustomer(customerId) {
-            alert(`الاتصال بالعميل ${customerId} - هذه الميزة قيد التطوير`);
-        }
-
-        // دوال المساعدة
-        async function loadProductsTable() {
-            try {
-                const products = await getProductsFromFirebase();
-                allProducts = products;
-                
-                const tableBody = document.getElementById('products-table-body');
-                
-                if (products.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                لا توجد منتجات
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                let productsHTML = '';
-                products.forEach(product => {
-                    const statusText = product.active !== false ? 'نشط' : 'غير نشط';
-                    const statusClass = product.active !== false ? 'text-success' : 'text-danger';
-                    
-                    productsHTML += `
-                        <tr>
-                            <td>
-                                <img src="${product.image}" alt="${product.name}" class="product-image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
-                            </td>
-                            <td>${product.name}</td>
-                            <td>${product.category}</td>
-                            <td>$${product.price}</td>
-                            <td><span class="${statusClass}">${statusText}</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="showEditProductForm(${JSON.stringify(product).replace(/"/g, '&quot;')})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product.id}', '${product.name}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tableBody.innerHTML = productsHTML;
-            } catch (error) {
-                console.error('❌ خطأ في تحميل المنتجات:', error);
-                document.getElementById('products-table-body').innerHTML = `
-                    <tr>
-                        <td colspan="6" class="text-center text-danger py-4">
-                            <i class="fas fa-exclamation-triangle me-2"></i>حدث خطأ في تحميل المنتجات
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        // دوال التصحيح والاتصال (نفس الدوال السابقة)
+        // دوال التصحيح والاتصال
         function testFirebaseConnection() {
             const result = document.getElementById('debug-result');
             result.innerHTML = '<div class="alert alert-info">🔄 جاري اختبار الاتصال مع قاعدة البيانات...</div>';
             
+            // تحديث حالة النظام أولاً
             checkSystemStatus();
             
             setTimeout(async () => {
@@ -1210,6 +556,7 @@
                 }
                 
                 try {
+                    // اختبار بسيط للاتصال بمحاولة جلب عدد المنتجات
                     const snapshot = await db.collection('products').limit(1).get();
                     const productsCount = await getProductsCount();
                     
@@ -1243,7 +590,7 @@
             }, 1000);
         }
 
-        // دوال مساعدة أخرى (نفس الدوال السابقة)
+        // تحديث عدد المنتجات
         async function updateProductsCount() {
             try {
                 const products = await getProductsFromFirebase();
@@ -1264,6 +611,7 @@
             }
         }
 
+        // الحصول على عدد المنتجات
         async function getProductsCount() {
             try {
                 const products = await getProductsFromFirebase();
@@ -1273,6 +621,7 @@
             }
         }
 
+        // التحقق من حالة النظام
         function checkSystemStatus() {
             const firebaseStatus = document.getElementById('firebase-status');
             const dbStatus = document.getElementById('db-status');
@@ -1294,6 +643,7 @@
             }
         }
 
+        // تحديث حالة الاتصال
         function updateConnectionStatus(status, text) {
             const connectionStatus = document.getElementById('connection-status');
             const statusClasses = {
@@ -1307,16 +657,77 @@
             connectionStatus.className = statusClasses[status] || statusClasses.secondary;
         }
 
+        // مسح نتائج التصحيح
         function clearDebugResults() {
             document.getElementById('debug-result').innerHTML = '';
         }
 
+        // إظهار نموذج إضافة المنتج
+        function showAddProductForm() {
+            document.getElementById('add-product-modal').classList.remove('d-none');
+            document.getElementById('add-product-modal').classList.add('d-flex');
+        }
+
+        // إخفاء نموذج إضافة المنتج
+        function hideAddProductForm() {
+            document.getElementById('add-product-modal').classList.remove('d-flex');
+            document.getElementById('add-product-modal').classList.add('d-none');
+            document.getElementById('add-product-form').reset();
+        }
+
+        // معالجة إرسال نموذج إضافة المنتج
+        document.getElementById('add-product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const productName = document.getElementById('product-name').value;
+            const productPrice = document.getElementById('product-price').value;
+            const productDescription = document.getElementById('product-description').value;
+            const productCategory = document.getElementById('product-category').value;
+            const productImage = document.getElementById('product-image').value;
+            const purchaseLink = document.getElementById('product-purchase-link').value;
+            
+            if (!productName || !productPrice || !productCategory) {
+                alert('❌ يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            
+            const newProduct = {
+                name: productName,
+                price: parseFloat(productPrice),
+                description: productDescription || 'لا يوجد وصف',
+                category: productCategory,
+                image: productImage || `https://via.placeholder.com/300x200/007bff/ffffff?text=${encodeURIComponent(productName)}`,
+                purchaseLink: purchaseLink,
+                dateAdded: new Date().toISOString(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await addProductToFirebase(newProduct);
+                alert(`✅ تم إضافة "${productName}" بنجاح!`);
+                hideAddProductForm();
+                
+                // تحديث العرض
+                setTimeout(() => {
+                    displayProductsInAdmin();
+                    updateProductsCount();
+                    checkSystemStatus();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ فشل في الإضافة:', error);
+                alert(`❌ فشل في إضافة المنتج: ${error.message}`);
+            }
+        });
+
+        // دالة تسجيل الخروج
         function logout() {
             localStorage.removeItem('adminLoggedIn');
             localStorage.removeItem('adminUsername');
             window.location.href = 'login.html';
         }
 
+        // تحديث الإحصائيات
         async function updateStatistics() {
             try {
                 const products = await getProductsFromFirebase();
@@ -1337,7 +748,7 @@
 
         // التهيئة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 لوحة التحكم المحسنة جاهزة للتشغيل');
+            console.log('🚀 لوحة التحكم جاهزة للتشغيل');
             
             // تعيين اسم المستخدم
             const username = localStorage.getItem('adminUsername') || 'wacelalorshe';
@@ -1347,71 +758,11 @@
             checkSystemStatus();
             updateStatistics();
             
-            // تحميل البيانات
+            // تحميل المنتجات بعد تأخير بسيط
             setTimeout(() => {
-                displayRecentProducts();
-                displayRecentOrders();
+                displayProductsInAdmin();
             }, 1000);
         });
-
-        // دوال محاكاة البيانات (يمكن استبدالها بالاتصال الفعلي مع Firebase)
-        async function getOrdersFromFirebase() {
-            // محاكاة بيانات الطلبات
-            return [
-                {
-                    id: 'ORD001',
-                    customer: { name: 'أحمد محمد', email: 'ahmed@example.com' },
-                    date: new Date().toISOString(),
-                    items: [{ name: 'هاتف ذكي', quantity: 1, price: 299.99 }],
-                    total: 299.99,
-                    status: 'pending'
-                },
-                {
-                    id: 'ORD002',
-                    customer: { name: 'فاطمة علي', email: 'fatima@example.com' },
-                    date: new Date(Date.now() - 86400000).toISOString(),
-                    items: [
-                        { name: 'سماعات لاسلكية', quantity: 1, price: 149.99 },
-                        { name: 'حقيبة ظهر', quantity: 1, price: 79.99 }
-                    ],
-                    total: 229.98,
-                    status: 'processing'
-                }
-            ];
-        }
-
-        async function getCustomersFromFirebase() {
-            // محاكاة بيانات العملاء
-            return [
-                {
-                    id: 'CUST001',
-                    name: 'أحمد محمد',
-                    email: 'ahmed@example.com',
-                    phone: '+966500000001',
-                    ordersCount: 3,
-                    totalSpent: 899.97,
-                    registerDate: new Date(Date.now() - 30 * 86400000).toISOString()
-                },
-                {
-                    id: 'CUST002',
-                    name: 'فاطمة علي',
-                    email: 'fatima@example.com',
-                    phone: '+966500000002',
-                    ordersCount: 5,
-                    totalSpent: 1249.95,
-                    registerDate: new Date(Date.now() - 60 * 86400000).toISOString()
-                },
-                {
-                    id: 'CUST003',
-                    name: 'محمد عبدالله',
-                    email: 'mohammed@example.com',
-                    phone: '+966500000003',
-                    ordersCount: 1,
-                    totalSpent: 199.99,
-                    registerDate: new Date(Date.now() - 15 * 86400000).toISOString()
-                }
-            ];
-        }
     </script>
 </body>
 </html>

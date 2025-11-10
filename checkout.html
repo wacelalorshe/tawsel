@@ -607,12 +607,16 @@
                 // محاولة الحصول على منتج الشراء المباشر
                 const buyNowProduct = localStorage.getItem('buyNowProduct');
                 if (buyNowProduct) {
-                    return [JSON.parse(buyNowProduct)];
+                    const product = JSON.parse(buyNowProduct);
+                    console.log('🛍️ منتج الشراء المباشر:', product);
+                    return [product];
                 }
 
                 // إذا لم يكن هناك منتج شراء مباشر، نعود للسلة العادية
                 const cart = localStorage.getItem('waseelStoreCart');
-                return cart ? JSON.parse(cart) : [];
+                const parsedCart = cart ? JSON.parse(cart) : [];
+                console.log('🛒 السلة العادية:', parsedCart);
+                return parsedCart;
             } catch (error) {
                 console.error('خطأ في جلب بيانات السلة:', error);
                 return [];
@@ -647,6 +651,8 @@
                 
                 const cart = getCart();
                 
+                console.log('📦 المنتجات المعروضة:', cart);
+                
                 if (cart.length === 0) {
                     container.innerHTML = `
                         <div class="text-center py-3">
@@ -669,6 +675,7 @@
                             <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">${item.name}</h6>
+                                <p class="text-muted mb-1">${item.description ? item.description.substring(0, 50) + '...' : 'منتج مميز'}</p>
                                 <p class="text-muted mb-0">$${item.price} × ${item.quantity}</p>
                                 ${item.purchaseLink ? `<small class="text-info"><i class="fas fa-link me-1"></i>رابط الشراء المباشر</small>` : ''}
                             </div>
@@ -795,14 +802,26 @@
                 let orderDetails = '';
                 let totalAmount = 0;
                 
+                console.log('🛒 المنتجات في السلة:', cart);
+                
+                // جمع تفاصيل المنتجات
                 cart.forEach(item => {
                     const itemTotal = item.price * item.quantity;
                     totalAmount += itemTotal;
-                    orderDetails += `- ${item.name} (${item.quantity} × $${item.price}) = $${itemTotal.toFixed(2)}`;
+                    
+                    orderDetails += `📱 ${item.name}\n`;
+                    orderDetails += `   💰 السعر: $${item.price}\n`;
+                    orderDetails += `   🔢 الكمية: ${item.quantity}\n`;
+                    orderDetails += `   💵 المجموع: $${itemTotal.toFixed(2)}\n`;
+                    
+                    // إضافة الوصف إذا كان موجوداً
+                    if (item.description) {
+                        orderDetails += `   📝 الوصف: ${item.description}\n`;
+                    }
                     
                     // إضافة رابط الشراء المباشر إذا كان موجوداً
                     if (item.purchaseLink) {
-                        orderDetails += ` (رابط مباشر: ${item.purchaseLink})`;
+                        orderDetails += `   🔗 رابط الشراء: ${item.purchaseLink}\n`;
                     }
                     
                     orderDetails += `\n`;
@@ -813,11 +832,7 @@
                 const tax = totalAmount * 0.05;
                 const finalTotal = totalAmount + shipping + tax;
                 
-                orderDetails += `\nرسوم الشحن: $${shipping.toFixed(2)}`;
-                orderDetails += `\nالضريبة: $${tax.toFixed(2)}`;
-                orderDetails += `\nالمجموع الكلي: $${finalTotal.toFixed(2)}`;
-                
-                // إنشاء نص الرسالة
+                // إنشاء نص الرسالة الكاملة
                 const message = `🛒 طلب جديد من وسيل ستور\n\n` +
                                `📦 رقم الطلب: ${orderNumber}\n` +
                                `👤 الاسم: ${customerName}\n` +
@@ -826,7 +841,14 @@
                                `📍 العنوان: ${customerAddress}\n` +
                                `💳 طريقة الدفع: ${paymentMethodName}\n` +
                                `📝 ملاحظات: ${customerNotes || 'لا توجد'}\n\n` +
-                               `🛍️ تفاصيل المنتجات:\n${orderDetails}`;
+                               `🛍️ تفاصيل المنتجات:\n${orderDetails}\n` +
+                               `💰 ملخص الفاتورة:\n` +
+                               `   📊 المجموع الفرعي: $${totalAmount.toFixed(2)}\n` +
+                               `   🚚 رسوم الشحن: $${shipping.toFixed(2)}\n` +
+                               `   🏛️ الضريبة (5%): $${tax.toFixed(2)}\n` +
+                               `   💰 المجموع الكلي: $${finalTotal.toFixed(2)}\n\n` +
+                               `⏰ سيتم التواصل معك خلال 24 ساعة لتأكيد الطلب\n` +
+                               `📞 للاستفسار: 735981122`;
                 
                 // تشفير النص للرابط
                 const encodedMessage = encodeURIComponent(message);
@@ -838,6 +860,7 @@
                 const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
                 
                 console.log('📤 رابط الواتساب:', whatsappURL);
+                console.log('📋 محتوى الرسالة:', message);
                 
                 // فتح الرابط في نافذة جديدة
                 window.open(whatsappURL, '_blank');

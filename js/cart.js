@@ -171,7 +171,7 @@ window.displayCartItems = function() {
     });
     
     // حساب التكاليف الإضافية
-    const shipping = 5.00; // رسوم الشحن
+    const shipping = calculateShipping();
     const tax = subtotal * 0.05; // ضريبة 5%
     const total = subtotal + shipping + tax;
     
@@ -179,8 +179,62 @@ window.displayCartItems = function() {
     if (cartTotal) cartTotal.textContent = total.toFixed(2);
     if (cartCount) cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
     
-    // تحديث ملخص الطلب
+    // تحديث ملخص الطلب وخيارات الشحن
     updateOrderSummary(subtotal, shipping, tax, total);
+    updateShippingOptions();
+}
+
+// دالة حساب تكلفة الشحن
+function calculateShipping() {
+    const shippingOption = document.querySelector('input[name="shipping"]:checked');
+    if (shippingOption) {
+        return parseFloat(shippingOption.value);
+    }
+    return 5.00; // قيمة افتراضية
+}
+
+// تحديث خيارات الشحن
+function updateShippingOptions() {
+    const shippingOptions = document.getElementById('shipping-options');
+    if (!shippingOptions) return;
+    
+    shippingOptions.innerHTML = `
+        <h5 class="mb-3">خيارات الشحن:</h5>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="shipping" id="shipping-standard" value="5.00" checked onchange="updateOrderTotals()">
+            <label class="form-check-label" for="shipping-standard">
+                التوصيل العادي (5.00$) - 3-5 أيام
+            </label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="shipping" id="shipping-express" value="10.00" onchange="updateOrderTotals()">
+            <label class="form-check-label" for="shipping-express">
+                التوصيل السريع (10.00$) - 1-2 أيام
+            </label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="shipping" id="shipping-free" value="0.00" onchange="updateOrderTotals()">
+            <label class="form-check-label" for="shipping-free">
+                الاستلام من المتجر (مجاني)
+            </label>
+        </div>
+    `;
+}
+
+// تحديث إجماليات الطلب عند تغيير خيار الشحن
+window.updateOrderTotals = function() {
+    const cart = getCart();
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = calculateShipping();
+    const tax = subtotal * 0.05;
+    const total = subtotal + shipping + tax;
+    
+    updateOrderSummary(subtotal, shipping, tax, total);
+    
+    const cartTotal = document.getElementById('cart-total');
+    if (cartTotal) {
+        cartTotal.textContent = total.toFixed(2);
+    }
 }
 
 // تحديث ملخص الطلب
@@ -211,7 +265,7 @@ function updateOrderSummary(subtotal, shipping, tax, total) {
     }
 }
 
-// دالة إتمام الطلب والانتقال إلى صفحة الشراء
+// دالة إتمام الطلب وإرساله عبر واتساب
 window.proceedToCheckout = function() {
     const cart = getCart();
     
@@ -220,8 +274,82 @@ window.proceedToCheckout = function() {
         return;
     }
     
-    // الانتقال إلى صفحة الشراء
-    window.location.href = 'checkout.html';
+    // إنشاء رسالة الطلب
+    const orderMessage = createOrderMessage();
+    
+    // إرسال الطلب عبر واتساب
+    sendOrderViaWhatsApp(orderMessage);
+}
+
+// دالة إنشاء رسالة الطلب
+function createOrderMessage() {
+    const cart = getCart();
+    const shippingOption = document.querySelector('input[name="shipping"]:checked');
+    let shippingText = '';
+    
+    if (shippingOption) {
+        if (shippingOption.id === 'shipping-standard') {
+            shippingText = 'التوصيل العادي (5.00$) - 3-5 أيام';
+        } else if (shippingOption.id === 'shipping-express') {
+            shippingText = 'التوصيل السريع (10.00$) - 1-2 أيام';
+        } else if (shippingOption.id === 'shipping-free') {
+            shippingText = 'الاستلام من المتجر (مجاني)';
+        }
+    }
+    
+    let message = '🛒 *طلب جديد من وسيل ستور* 🛒\n\n';
+    message += 'تفاصيل الطلب:\n';
+    message += '────────────────\n\n';
+    
+    let subtotal = 0;
+    
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        
+        message += `*${index + 1}. ${item.name}*\n`;
+        message += `   - الكمية: ${item.quantity}\n`;
+        message += `   - السعر: $${item.price}\n`;
+        message += `   - الإجمالي: $${itemTotal.toFixed(2)}\n`;
+        
+        if (item.restaurantName) {
+            message += `   - المطعم: ${item.restaurantName}\n`;
+        }
+        
+        message += '\n';
+    });
+    
+    const shipping = calculateShipping();
+    const tax = subtotal * 0.05;
+    const total = subtotal + shipping + tax;
+    
+    message += '────────────────\n';
+    message += `*المجموع الفرعي:* $${subtotal.toFixed(2)}\n`;
+    message += `*رسوم الشحن:* $${shipping.toFixed(2)} (${shippingText})\n`;
+    message += `*الضريبة (5%):* $${tax.toFixed(2)}\n`;
+    message += `*المجموع الكلي:* $${total.toFixed(2)}\n\n`;
+    
+    message += 'شكراً لاختياركم وسيل ستور! 🎉';
+    
+    return message;
+}
+
+// دالة إرسال الطلب عبر واتساب
+function sendOrderViaWhatsApp(message) {
+    // تنظيف الرسالة من الأحرف الخاصة
+    const encodedMessage = encodeURIComponent(message);
+    
+    // رقم واتساب المتجر (استبدله بالرقم الفعلي)
+    const phoneNumber = '966123456789';
+    
+    // إنشاء رابط واتساب
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    // فتح نافذة جديدة للواتساب
+    window.open(whatsappURL, '_blank');
+    
+    // إشعار للمستخدم
+    showNotification('✅ تم فتح واتساب لإرسال طلبك', 'success');
 }
 
 // دالة الشراء المباشر
@@ -229,9 +357,9 @@ window.buyNow = function(productId, productName, productPrice, productImage, res
     // إضافة المنتج إلى السلة
     addToCart(productId, productName, productPrice, productImage, restaurantId, restaurantName);
     
-    // الانتقال المباشر إلى صفحة الشراء بعد تأخير بسيط
+    // الانتقال المباشر إلى صفحة السلة بعد تأخير بسيط
     setTimeout(() => {
-        window.location.href = 'checkout.html';
+        window.location.href = 'cart.html';
     }, 800);
 }
 

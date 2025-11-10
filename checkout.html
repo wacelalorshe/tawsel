@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #2E86AB;
+            --primary-color: #f8f9fa;
             --secondary-color: #A23B72;
             --accent-color: #F18F01;
             --light-color: #f8f9fa;
@@ -20,18 +20,19 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
             line-height: 1.6;
         }
         
         /* تحسينات عامة */
             .navbar {
-            box-shadow: 0 10px 10px rgba(0,0,0,0.9);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.9);
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
         }
         
+        
         .checkout-section {
-            background: white;
+            background: #f8f9fa;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -46,6 +47,8 @@
         }
         
         .card {
+        	
+        
             border: none;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -110,7 +113,7 @@
         
         .payment-method.selected {
             border-color: var(--primary-color);
-            background-color: rgba(46, 134, 171, 0);
+            background-color: rgba(46, 134, 171, 0.05);
         }
         
         .payment-icon {
@@ -132,7 +135,7 @@
         
         .contact-method:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+            box-shadow: 0 10px 20px rgba(,0,0,0.12);
         }
         
         .contact-icon {
@@ -225,6 +228,7 @@
         }
         
         .form-control:focus {
+        	
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(46, 134, 171, 0.25);
         }
@@ -393,13 +397,13 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="customer-address" class="form-label">اكتب اسم المنتج </label>
+                            <label for="customer-address" class="form-label">العنوان التفصيلي</label>
                             <textarea class="form-control" id="customer-address" rows="3" required></textarea>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="customer-notes" class="form-label">اكتب عنوانك بالتفصيل</label>
-                            <textarea class="form-control" id="customer-notes" rows="2" placeholder="اكتب العنوان الذي تريد ايصال المنتج الية"></textarea>
+                            <label for="customer-notes" class="form-label">اكتب اسم ونوع المنتج الذي تريد</label>
+                            <textarea class="form-control" id="customer-notes" rows="2" placeholder="اكتب هنا اسم المتجات المطلوبة شرائها"></textarea>
                         </div>
                         
                         <div class="d-flex justify-content-between mt-4">
@@ -523,7 +527,7 @@
                             <p><strong>المدينة:</strong> <span id="confirm-city"></span></p>
                             <p><strong>العنوان:</strong> <span id="confirm-address"></span></p>
                             <p><strong>طريقة الدفع:</strong> <span id="confirm-payment"></span></p>
-                            <p><strong>ملاحظات:</strong> <span id="confirm-notes"></span></p>
+                            <p><strong>المنتج:</strong> <span id="confirm-notes"></span></p>
                         </div>
                         <div class="col-md-6">
                             <h5>معلومات الشحن</h5>
@@ -568,7 +572,7 @@
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>رسوم الشحن:</span>
-                            <span>$<span id="shipping">0</span></span>
+                            <span>$<span id="shipping">0.0</span></span>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>الضريبة (5%):</span>
@@ -653,14 +657,14 @@
     </div>
 
     <!-- الفوتر -->
-    <footer class="py-4 bg-dark text-white mt-5">
+    <footer class="py-4 bg-white text-dark mt-5">
         <div class="container text-center">
             <p class="mb-0">&copy; 2024 وسيل ستور. جميع الحقوق محفوظة.</p>
             <div class="mt-2">
-                <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-dark"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </footer>
@@ -677,8 +681,8 @@
         function getCart() {
             // هذه دالة محاكاة - في التطبيق الحقيقي ستأخذ البيانات من localStorage أو API
             return [
-                { id: 1, name: ' ', price: , quantity: 1, image: '' },
-                { id: 2, name: '', price: , quantity: 2, image: '' }
+                { id: 1, name: '.', price: 0.0, quantity: 1, image: 'https://via.placeholder.com/150' },
+                { id: 2, name: '.', price: 0.0, quantity: 2, image: 'https://via.placeholder.com/150' }
             ];
         }
 
@@ -734,8 +738,8 @@
             });
             
             // حساب التكاليف الإضافية
-            const shipping = 0;
-            const tax = subtotal * 0;
+            const shipping = 0.0;
+            const tax = subtotal * 0.0;
             const total = subtotal + shipping + tax;
             
             container.innerHTML = itemsHTML;
@@ -832,8 +836,8 @@
             });
             
             // إضافة التكاليف الإضافية
-            const shipping = 0;
-            const tax = totalAmount * 0;
+            const shipping = 0.0;
+            const tax = totalAmount * 0.0;
             const finalTotal = totalAmount + shipping + tax;
             
             orderDetails += `\nرسوم الشحن: $${shipping.toFixed(2)}`;
